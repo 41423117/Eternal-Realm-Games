@@ -211,6 +211,131 @@
             background: rgba(40, 80, 150, 0.8);
             transform: scale(1.05);
         }
+        
+        /* 历史记录按钮样式 */
+        #historyButton {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 60, 114, 0.7);
+            color: white;
+            border: 2px solid #4cc9f0;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        #historyButton:hover {
+            background: rgba(40, 80, 150, 0.8);
+            transform: scale(1.05);
+        }
+        
+        /* 历史记录弹窗样式 */
+        #historyPopup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 378px; /* 10cm */
+            height: 567px; /* 15cm */
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid #4cc9f0;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(76, 201, 240, 0.7);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #historyHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(30, 60, 114, 0.7);
+            border-bottom: 2px solid #4cc9f0;
+        }
+        
+        #historyTitle {
+            font-size: 1.5rem;
+            color: #4cc9f0;
+        }
+        
+        #closeHistory {
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+        
+        #closeHistory:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        #historyContent {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .historyItem {
+            background: rgba(30, 60, 114, 0.5);
+            border: 1px solid #4cc9f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .historyScore {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        .historyDetails {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+        
+        .noHistory {
+            text-align: center;
+            color: #a0a0a0;
+            margin-top: 50%;
+            font-size: 1.2rem;
+        }
+        
+        /* 滚动条样式 */
+        #historyContent::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #historyContent::-webkit-scrollbar-track {
+            background: rgba(30, 60, 114, 0.3);
+            border-radius: 4px;
+        }
+        
+        #historyContent::-webkit-scrollbar-thumb {
+            background: #4cc9f0;
+            border-radius: 4px;
+        }
+        
+        #historyContent::-webkit-scrollbar-thumb:hover {
+            background: #3aa8d8;
+        }
     </style>
 </head>
 <body>
@@ -232,6 +357,7 @@
             <div id="randomButton" class="button">隨機難度</div>
             <div id="exitButton" class="button">退出</div>
             <div id="resumeButton" class="button" style="display: none;">繼續</div>
+            <div id="historyButton">歷史記錄</div>
             <p class="instructions">按ESC鍵暫停遊戲</p>
         </div>
         
@@ -243,6 +369,17 @@
                 <h2>遊戲結束</h2>
                 <p>你的分數: <span id="finalScore">0</span></p>
                 <div id="continueButton">繼續</div>
+            </div>
+        </div>
+        
+        <!-- 历史记录弹窗 -->
+        <div id="historyPopup">
+            <div id="historyHeader">
+                <div id="historyTitle">歷史記錄</div>
+                <div id="closeHistory">✕</div>
+            </div>
+            <div id="historyContent">
+                <div class="noHistory">暫無遊戲記錄</div>
             </div>
         </div>
     </div>
@@ -289,16 +426,20 @@
         let birds = [];
         let birdsSpawned = 0;
         let birdsKilled = 0;
-        let birdsEscaped = 0; // 新增：記錄逃脫的飛鳥數量
+        let birdsEscaped = 0; // 記錄逃脫的飛鳥數量
         let lastSpawnTime = 0;
         let gameCanvas, ctx;
         let crosshair;
+        let gameHistory = [];
 
         // 初始化遊戲
         function init() {
             gameCanvas = document.getElementById('gameCanvas');
             ctx = gameCanvas.getContext('2d');
             crosshair = document.getElementById('crosshair');
+            
+            // 從localStorage加載歷史記錄
+            loadHistory();
             
             // 設置畫布大小
             resizeCanvas();
@@ -330,6 +471,10 @@
             document.getElementById('exitButton').addEventListener('click', showMainScreen);
             document.getElementById('resumeButton').addEventListener('click', resumeGame);
             
+            // 歷史記錄按鈕
+            document.getElementById('historyButton').addEventListener('click', showHistory);
+            document.getElementById('closeHistory').addEventListener('click', hideHistory);
+            
             // 遊戲結束繼續按鈕
             document.getElementById('continueButton').addEventListener('click', showDifficultyScreen);
             
@@ -343,6 +488,79 @@
             document.addEventListener('click', handleClick);
         }
 
+        // 顯示歷史記錄
+        function showHistory() {
+            document.getElementById('historyPopup').style.display = 'flex';
+            updateHistoryDisplay();
+        }
+
+        // 隱藏歷史記錄
+        function hideHistory() {
+            document.getElementById('historyPopup').style.display = 'none';
+        }
+
+        // 更新歷史記錄顯示
+        function updateHistoryDisplay() {
+            const historyContent = document.getElementById('historyContent');
+            
+            if (gameHistory.length === 0) {
+                historyContent.innerHTML = '<div class="noHistory">暫無遊戲記錄</div>';
+                return;
+            }
+            
+            let historyHTML = '';
+            gameHistory.forEach((record, index) => {
+                historyHTML += `
+                    <div class="historyItem">
+                        <div class="historyDetails">
+                            <div>${record.date}</div>
+                            <div>難度: ${record.difficulty}</div>
+                        </div>
+                        <div class="historyScore">${record.score} 分</div>
+                    </div>
+                `;
+            });
+            
+            historyContent.innerHTML = historyHTML;
+        }
+
+        // 保存歷史記錄到localStorage
+        function saveHistory() {
+            localStorage.setItem('birdShootingGameHistory', JSON.stringify(gameHistory));
+        }
+
+        // 從localStorage加載歷史記錄
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('birdShootingGameHistory');
+            if (savedHistory) {
+                gameHistory = JSON.parse(savedHistory);
+            }
+        }
+
+        // 添加新的歷史記錄
+        function addHistoryRecord(score, difficulty) {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // 將新記錄添加到開頭
+            gameHistory.unshift({
+                date: dateStr,
+                score: score,
+                difficulty: difficulty
+            });
+            
+            // 只保留最近的50條記錄
+            if (gameHistory.length > 50) {
+                gameHistory = gameHistory.slice(0, 50);
+            }
+            
+            // 保存到localStorage
+            saveHistory();
+            
+            // 更新顯示
+            updateHistoryDisplay();
+        }
+
         // 顯示難度選擇畫面
         function showDifficultyScreen() {
             document.getElementById('mainScreen').classList.add('hidden');
@@ -350,6 +568,7 @@
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('resumeButton').style.display = 'none';
             document.getElementById('gameOverMessage').style.display = 'none';
+            hideHistory(); // 確保歷史記錄彈窗關閉
             currentState = GameState.DIFFICULTY_SELECT;
         }
 
@@ -358,6 +577,7 @@
             document.getElementById('difficultyScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
+            hideHistory(); // 確保歷史記錄彈窗關閉
             currentState = GameState.MAIN_MENU;
         }
 
@@ -542,6 +762,9 @@
             
             // 更新最終分數顯示
             document.getElementById('finalScore').textContent = score;
+            
+            // 添加歷史記錄
+            addHistoryRecord(score, currentDifficulty.name);
             
             // 顯示遊戲結束訊息
             setTimeout(() => {
