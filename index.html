@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞鸟射击游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            background-color: #1a1a2e;
+            color: white;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #mainScreen {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        #difficultyScreen {
+            background: linear-gradient(45deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        #gameScreen {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .title {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
+            color: #e0e0e0;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: #a0a0a0;
+        }
+        
+        .button {
+            background: rgba(30, 60, 114, 0.7);
+            color: white;
+            border: 2px solid #4cc9f0;
+            border-radius: 10px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+        }
+        
+        .button:hover {
+            background: rgba(40, 80, 150, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(76, 201, 240, 0.8);
+        }
+        
+        .button:active {
+            transform: scale(0.98);
+        }
+        
+        #startButton {
+            margin-top: 2rem;
+            font-size: 2rem;
+            padding: 20px 60px;
+            width: 300px;
+        }
+        
+        #crosshair {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #4cc9f0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(76, 201, 240, 0.8);
+            display: none;
+        }
+        
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background-color: #4cc9f0;
+        }
+        
+        #crosshair::before {
+            width: 2px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #crosshair::after {
+            width: 20px;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            color: white;
+            z-index: 100;
+        }
+        
+        #birdsLeft {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: white;
+            z-index: 100;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            width: 100%;
+            color: #a0a0a0;
+            font-size: 1rem;
+        }
+        
+        #gameOverMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 200;
+            display: none;
+            border: 2px solid #4cc9f0;
+            box-shadow: 0 0 20px rgba(76, 201, 240, 0.5);
+        }
+        
+        #gameOverMessage h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+        }
+        
+        #gameOverMessage p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        #continueButton {
+            background: rgba(30, 60, 114, 0.7);
+            color: white;
+            border: 2px solid #4cc9f0;
+            border-radius: 10px;
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #continueButton:hover {
+            background: rgba(40, 80, 150, 0.8);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="crosshair"></div>
+        
+        <div id="mainScreen" class="screen">
+            <h1 class="title">飛鳥射擊遊戲</h1>
+            <p class="subtitle">點擊開始，挑戰你的反應速度！</p>
+            <div id="startButton" class="button">開始遊戲</div>
+            <p class="instructions">按空格鍵或點擊開始按鈕開始遊戲</p>
+        </div>
+        
+        <div id="difficultyScreen" class="screen hidden">
+            <h1 class="title">選擇難度</h1>
+            <div id="easyButton" class="button">簡單</div>
+            <div id="normalButton" class="button">一般</div>
+            <div id="hardButton" class="button">困難</div>
+            <div id="randomButton" class="button">隨機難度</div>
+            <div id="exitButton" class="button">退出</div>
+            <div id="resumeButton" class="button" style="display: none;">繼續</div>
+            <p class="instructions">按ESC鍵暫停遊戲</p>
+        </div>
+        
+        <div id="gameScreen" class="screen hidden">
+            <canvas id="gameCanvas"></canvas>
+            <div id="score">分數: 0</div>
+            <div id="birdsLeft">剩餘飛鳥: 0</div>
+            <div id="gameOverMessage">
+                <h2>遊戲結束</h2>
+                <p>你的分數: <span id="finalScore">0</span></p>
+                <div id="continueButton">繼續</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態管理
+        const GameState = {
+            MAIN_MENU: 0,
+            DIFFICULTY_SELECT: 1,
+            PLAYING: 2,
+            PAUSED: 3,
+            GAME_OVER: 4
+        };
+
+        // 難度設定
+        const Difficulty = {
+            EASY: {
+                birds: 15,
+                speed: 2,
+                spawnMin: 1000,
+                spawnMax: 2500,
+                name: "簡單"
+            },
+            NORMAL: {
+                birds: 20,
+                speed: 2.3,
+                spawnMin: 800,
+                spawnMax: 2200,
+                name: "一般"
+            },
+            HARD: {
+                birds: 30,
+                speed: 2.8,
+                spawnMin: 600,
+                spawnMax: 1800,
+                name: "困難"
+            }
+        };
+
+        // 遊戲變數
+        let currentState = GameState.MAIN_MENU;
+        let currentDifficulty = Difficulty.EASY;
+        let score = 0;
+        let birds = [];
+        let birdsSpawned = 0;
+        let birdsKilled = 0;
+        let birdsEscaped = 0; // 新增：記錄逃脫的飛鳥數量
+        let lastSpawnTime = 0;
+        let gameCanvas, ctx;
+        let crosshair;
+
+        // 初始化遊戲
+        function init() {
+            gameCanvas = document.getElementById('gameCanvas');
+            ctx = gameCanvas.getContext('2d');
+            crosshair = document.getElementById('crosshair');
+            
+            // 設置畫布大小
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 設置事件監聽器
+            setupEventListeners();
+            
+            // 開始遊戲循環
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 調整畫布大小
+        function resizeCanvas() {
+            gameCanvas.width = window.innerWidth;
+            gameCanvas.height = window.innerHeight;
+        }
+
+        // 設置事件監聽器
+        function setupEventListeners() {
+            // 開始按鈕
+            document.getElementById('startButton').addEventListener('click', showDifficultyScreen);
+            
+            // 難度選擇按鈕
+            document.getElementById('easyButton').addEventListener('click', () => startGame(Difficulty.EASY));
+            document.getElementById('normalButton').addEventListener('click', () => startGame(Difficulty.NORMAL));
+            document.getElementById('hardButton').addEventListener('click', () => startGame(Difficulty.HARD));
+            document.getElementById('randomButton').addEventListener('click', startRandomGame);
+            document.getElementById('exitButton').addEventListener('click', showMainScreen);
+            document.getElementById('resumeButton').addEventListener('click', resumeGame);
+            
+            // 遊戲結束繼續按鈕
+            document.getElementById('continueButton').addEventListener('click', showDifficultyScreen);
+            
+            // 鍵盤控制
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // 滑鼠移動
+            document.addEventListener('mousemove', updateCrosshair);
+            
+            // 滑鼠點擊
+            document.addEventListener('click', handleClick);
+        }
+
+        // 顯示難度選擇畫面
+        function showDifficultyScreen() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('difficultyScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resumeButton').style.display = 'none';
+            document.getElementById('gameOverMessage').style.display = 'none';
+            currentState = GameState.DIFFICULTY_SELECT;
+        }
+
+        // 顯示主畫面
+        function showMainScreen() {
+            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            currentState = GameState.MAIN_MENU;
+        }
+
+        // 開始遊戲
+        function startGame(difficulty) {
+            currentDifficulty = difficulty;
+            score = 0;
+            birds = [];
+            birdsSpawned = 0;
+            birdsKilled = 0;
+            birdsEscaped = 0; // 重置逃脫的飛鳥數量
+            lastSpawnTime = 0;
+            
+            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('gameOverMessage').style.display = 'none';
+            crosshair.style.display = 'block';
+            
+            updateScore();
+            updateBirdsLeft();
+            
+            currentState = GameState.PLAYING;
+        }
+
+        // 開始隨機難度遊戲
+        function startRandomGame() {
+            const difficulties = [Difficulty.EASY, Difficulty.NORMAL, Difficulty.HARD];
+            const randomIndex = Math.floor(Math.random() * difficulties.length);
+            startGame(difficulties[randomIndex]);
+        }
+
+        // 繼續遊戲
+        function resumeGame() {
+            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('resumeButton').style.display = 'none';
+            crosshair.style.display = 'block';
+            currentState = GameState.PLAYING;
+        }
+
+        // 暫停遊戲
+        function pauseGame() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('difficultyScreen').classList.remove('hidden');
+            document.getElementById('resumeButton').style.display = 'block';
+            crosshair.style.display = 'none';
+            currentState = GameState.PAUSED;
+        }
+
+        // 處理鍵盤輸入
+        function handleKeyDown(e) {
+            switch(e.code) {
+                case 'Space':
+                    if (currentState === GameState.MAIN_MENU) {
+                        showDifficultyScreen();
+                    }
+                    break;
+                case 'Escape':
+                    if (currentState === GameState.PLAYING) {
+                        pauseGame();
+                    }
+                    break;
+            }
+        }
+
+        // 更新準星位置
+        function updateCrosshair(e) {
+            crosshair.style.left = (e.clientX - 20) + 'px';
+            crosshair.style.top = (e.clientY - 20) + 'px';
+        }
+
+        // 處理點擊事件
+        function handleClick(e) {
+            if (currentState !== GameState.PLAYING) return;
+            
+            const clickRadius = 30; // 點擊範圍為圓圈的1.5倍
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            // 檢查是否點擊到飛鳥
+            for (let i = birds.length - 1; i >= 0; i--) {
+                const bird = birds[i];
+                const distance = Math.sqrt(
+                    Math.pow(mouseX - bird.x, 2) + Math.pow(mouseY - bird.y, 2)
+                );
+                
+                if (distance < clickRadius) {
+                    // 擊中飛鳥
+                    birds.splice(i, 1);
+                    birdsKilled++;
+                    score += 10;
+                    updateScore();
+                    updateBirdsLeft();
+                    break;
+                }
+            }
+        }
+
+        // 更新分數顯示
+        function updateScore() {
+            document.getElementById('score').textContent = `分數: ${score}`;
+        }
+
+        // 更新剩餘飛鳥顯示
+        function updateBirdsLeft() {
+            const birdsRemaining = currentDifficulty.birds - birdsKilled - birdsEscaped;
+            document.getElementById('birdsLeft').textContent = `剩餘飛鳥: ${birdsRemaining}`;
+        }
+
+        // 生成飛鳥
+        function spawnBird() {
+            const now = Date.now();
+            if (birdsSpawned < currentDifficulty.birds && 
+                now - lastSpawnTime > getRandomSpawnTime()) {
+                
+                // 隨機決定從左邊還是右邊生成
+                const fromLeft = Math.random() > 0.5;
+                const x = fromLeft ? -50 : gameCanvas.width + 50;
+                const y = Math.random() * (gameCanvas.height - 100) + 50;
+                
+                // 飛鳥屬性
+                const bird = {
+                    x: x,
+                    y: y,
+                    width: 60,
+                    height: 30,
+                    speed: currentDifficulty.speed * (fromLeft ? 1 : -1),
+                    color: getRandomColor(),
+                    fromLeft: fromLeft
+                };
+                
+                birds.push(bird);
+                birdsSpawned++;
+                lastSpawnTime = now;
+                updateBirdsLeft();
+            }
+        }
+
+        // 獲取隨機生成時間
+        function getRandomSpawnTime() {
+            return Math.random() * 
+                (currentDifficulty.spawnMax - currentDifficulty.spawnMin) + 
+                currentDifficulty.spawnMin;
+        }
+
+        // 獲取隨機顏色
+        function getRandomColor() {
+            const colors = [
+                '#FF6B6B', '#4ECDC4', '#FFE66D', '#6A0572', 
+                '#1A936F', '#114B5F', '#F9C80E', '#EA3546'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // 更新飛鳥位置
+        function updateBirds() {
+            for (let i = birds.length - 1; i >= 0; i--) {
+                const bird = birds[i];
+                bird.x += bird.speed;
+                
+                // 檢查是否飛出畫面
+                const birdWidth = bird.width;
+                if ((bird.fromLeft && bird.x > gameCanvas.width + birdWidth/2) || 
+                    (!bird.fromLeft && bird.x < -birdWidth/2)) {
+                    // 飛鳥飛出畫面，移除並增加逃脫計數
+                    birds.splice(i, 1);
+                    birdsEscaped++;
+                    updateBirdsLeft();
+                }
+            }
+            
+            // 檢查遊戲是否結束
+            if (birdsSpawned >= currentDifficulty.birds && birds.length === 0) {
+                endGame();
+            }
+        }
+
+        // 結束遊戲
+        function endGame() {
+            currentState = GameState.GAME_OVER;
+            crosshair.style.display = 'none';
+            
+            // 更新最終分數顯示
+            document.getElementById('finalScore').textContent = score;
+            
+            // 顯示遊戲結束訊息
+            setTimeout(() => {
+                document.getElementById('gameOverMessage').style.display = 'block';
+            }, 500);
+        }
+
+        // 繪製飛鳥
+        function drawBirds() {
+            birds.forEach(bird => {
+                ctx.fillStyle = bird.color;
+                
+                // 繪製飛鳥身體
+                ctx.beginPath();
+                ctx.ellipse(bird.x, bird.y, bird.width/2, bird.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 繪製翅膀
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(
+                    bird.x - (bird.speed > 0 ? -10 : 10), 
+                    bird.y - 5, 
+                    bird.width/3, 
+                    bird.height/1.5, 
+                    0, 0, Math.PI * 2
+                );
+                ctx.fill();
+                
+                // 繪製眼睛
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(
+                    bird.x + (bird.speed > 0 ? bird.width/4 : -bird.width/4), 
+                    bird.y - 5, 
+                    5, 0, Math.PI * 2
+                );
+                ctx.fill();
+                
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(
+                    bird.x + (bird.speed > 0 ? bird.width/4 : -bird.width/4), 
+                    bird.y - 5, 
+                    2, 0, Math.PI * 2
+                );
+                ctx.fill();
+            });
+        }
+
+        // 繪製遊戲背景
+        function drawBackground() {
+            // 繪製漸層背景
+            const gradient = ctx.createLinearGradient(0, 0, 0, gameCanvas.height);
+            gradient.addColorStop(0, '#1a1a2e');
+            gradient.addColorStop(1, '#16213e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            
+            // 繪製雲朵
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            for (let i = 0; i < 5; i++) {
+                const x = (Date.now() / 10000 + i * 0.5) % 1 * gameCanvas.width * 2 - gameCanvas.width;
+                const y = i * 100 + 50;
+                const width = 100 + i * 30;
+                const height = 40 + i * 10;
+                
+                ctx.beginPath();
+                ctx.ellipse(x, y, width, height, 0, 0, Math.PI * 2);
+                ctx.ellipse(x + width * 0.5, y - height * 0.3, width * 0.6, height * 0.8, 0, 0, Math.PI * 2);
+                ctx.ellipse(x - width * 0.5, y - height * 0.3, width * 0.6, height * 0.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 遊戲主循環
+        function gameLoop() {
+            if (currentState === GameState.PLAYING) {
+                // 生成和更新飛鳥
+                spawnBird();
+                updateBirds();
+                
+                // 繪製遊戲
+                drawBackground();
+                drawBirds();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 初始化遊戲
+        window.onload = init;
+    </script>
+</body>
+</html>
