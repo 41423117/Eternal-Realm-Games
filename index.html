@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>飞鸟射击游戏</title>
+    <title>永恒领域游戏</title>
     <style>
         * {
             margin: 0;
@@ -52,6 +52,13 @@
         
         #mainScreen {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        #gameSelectionScreen {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
         }
         
         #difficultyScreen {
@@ -336,6 +343,154 @@
         #historyContent::-webkit-scrollbar-thumb:hover {
             background: #3aa8d8;
         }
+        
+        /* 游戏选择界面样式 */
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .category-tab {
+            background: rgba(30, 60, 114, 0.7);
+            color: white;
+            border: 2px solid #4cc9f0;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 0 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            text-align: center;
+            flex: 1;
+            max-width: 150px;
+        }
+        
+        .category-tab:hover {
+            background: rgba(40, 80, 150, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .category-tab.active {
+            background: rgba(76, 201, 240, 0.7);
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.7);
+        }
+        
+        .content-display {
+            background: rgba(30, 60, 114, 0.3);
+            border: 2px solid #4cc9f0;
+            border-radius: 15px;
+            width: 90%;
+            height: 70%;
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 20px;
+            align-content: flex-start;
+        }
+        
+        .game-item {
+            background: rgba(30, 60, 114, 0.7);
+            border: 2px solid #4cc9f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .game-item:hover {
+            background: rgba(40, 80, 150, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+        }
+        
+        .game-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #4cc9f0;
+        }
+        
+        .no-games {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 1.5rem;
+            margin-top: 50px;
+        }
+        
+        /* 语言切换样式 */
+        .language-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .language-label {
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+        
+        .language-selector {
+            position: relative;
+            width: 160px; /* 4cm */
+        }
+        
+        .language-display {
+            background: rgba(30, 60, 114, 0.7);
+            border: 2px solid #4cc9f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px; /* 0.2cm */
+        }
+        
+        .language-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid #4cc9f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+        
+        .language-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .language-option:hover {
+            background: rgba(76, 201, 240, 0.3);
+        }
+        
+        .language-arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        .language-selector.open .language-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .language-selector.open .language-options {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -343,10 +498,26 @@
         <div id="crosshair"></div>
         
         <div id="mainScreen" class="screen">
-            <h1 class="title">飛鳥射擊遊戲</h1>
+            <h1 class="title">永恆領域遊戲</h1>
             <p class="subtitle">點擊開始，挑戰你的反應速度！</p>
             <div id="startButton" class="button">開始遊戲</div>
             <p class="instructions">按空格鍵或點擊開始按鈕開始遊戲</p>
+        </div>
+        
+        <div id="gameSelectionScreen" class="screen hidden">
+            <div class="category-tabs">
+                <div class="category-tab active" data-category="all">所有遊戲</div>
+                <div class="category-tab" data-category="shooting">射擊遊戲</div>
+                <div class="category-tab" data-category="driving">開車遊戲</div>
+                <div class="category-tab" data-category="card">紙牌遊戲</div>
+                <div class="category-tab" data-category="action">動作遊戲</div>
+                <div class="category-tab" data-category="settings">設定</div>
+                <div class="category-tab" id="backToMainTab">返回</div>
+            </div>
+            
+            <div class="content-display" id="contentDisplay">
+                <!-- 游戏内容将动态加载 -->
+            </div>
         </div>
         
         <div id="difficultyScreen" class="screen hidden">
@@ -388,10 +559,11 @@
         // 遊戲狀態管理
         const GameState = {
             MAIN_MENU: 0,
-            DIFFICULTY_SELECT: 1,
-            PLAYING: 2,
-            PAUSED: 3,
-            GAME_OVER: 4
+            GAME_SELECTION: 1,
+            DIFFICULTY_SELECT: 2,
+            PLAYING: 3,
+            PAUSED: 4,
+            GAME_OVER: 5
         };
 
         // 難度設定
@@ -431,6 +603,385 @@
         let gameCanvas, ctx;
         let crosshair;
         let gameHistory = [];
+        let currentLanguage = 'zh-TW';
+        let currentGameId = 'birdShooting';
+
+        // 游戏数据
+        const games = {
+            'all': [
+                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' }
+            ],
+            'shooting': [
+                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' }
+            ],
+            'driving': [],
+            'card': [],
+            'action': []
+        };
+
+        // 语言数据
+        const languageData = {
+            'zh-TW': {
+                title: '永恆領域遊戲',
+                subtitle: '點擊開始，挑戰你的反應速度！',
+                startButton: '開始遊戲',
+                instructions: '按空格鍵或點擊開始按鈕開始遊戲',
+                // 游戏选择界面
+                allGames: '所有遊戲',
+                shootingGames: '射擊遊戲',
+                drivingGames: '開車遊戲',
+                cardGames: '紙牌遊戲',
+                actionGames: '動作遊戲',
+                settings: '設定',
+                backToMain: '返回',
+                noGames: '暫無遊戲',
+                // 难度选择界面
+                selectDifficulty: '選擇難度',
+                easy: '簡單',
+                normal: '一般',
+                hard: '困難',
+                random: '隨機難度',
+                exit: '退出',
+                resume: '繼續',
+                history: '歷史記錄',
+                pauseInstructions: '按ESC鍵暫停遊戲',
+                // 游戏界面
+                score: '分數',
+                birdsLeft: '剩餘飛鳥',
+                gameOver: '遊戲結束',
+                yourScore: '你的分數',
+                continue: '繼續',
+                // 历史记录
+                historyTitle: '歷史記錄',
+                noHistory: '暫無遊戲記錄',
+                // 设置
+                languageSwitch: '語言切換',
+                // 语言选项
+                chineseTraditional: '中文繁體',
+                chineseSimplified: '中文簡體',
+                english: '英文',
+                french: '法文',
+                russian: '俄羅斯文',
+                danish: '丹文',
+                japanese: '日文',
+                dinka: '丁卡文'
+            },
+            'zh-CN': {
+                title: '永恒领域游戏',
+                subtitle: '点击开始，挑战你的反应速度！',
+                startButton: '开始游戏',
+                instructions: '按空格键或点击开始按钮开始游戏',
+                // 游戏选择界面
+                allGames: '所有游戏',
+                shootingGames: '射击游戏',
+                drivingGames: '开车游戏',
+                cardGames: '纸牌游戏',
+                actionGames: '动作游戏',
+                settings: '设定',
+                backToMain: '返回',
+                noGames: '暂无游戏',
+                // 难度选择界面
+                selectDifficulty: '选择难度',
+                easy: '简单',
+                normal: '一般',
+                hard: '困难',
+                random: '随机难度',
+                exit: '退出',
+                resume: '继续',
+                history: '历史记录',
+                pauseInstructions: '按ESC键暂停游戏',
+                // 游戏界面
+                score: '分数',
+                birdsLeft: '剩余飞鸟',
+                gameOver: '游戏结束',
+                yourScore: '你的分数',
+                continue: '继续',
+                // 历史记录
+                historyTitle: '历史记录',
+                noHistory: '暂无游戏记录',
+                // 设置
+                languageSwitch: '语言切换',
+                // 语言选项
+                chineseTraditional: '中文繁体',
+                chineseSimplified: '中文简体',
+                english: '英文',
+                french: '法文',
+                russian: '俄罗斯文',
+                danish: '丹文',
+                japanese: '日文',
+                dinka: '丁卡文'
+            },
+            'en': {
+                title: 'Eternal Realm Game',
+                subtitle: 'Click start to challenge your reaction speed!',
+                startButton: 'Start Game',
+                instructions: 'Press space or click start button to begin',
+                // 游戏选择界面
+                allGames: 'All Games',
+                shootingGames: 'Shooting Games',
+                drivingGames: 'Driving Games',
+                cardGames: 'Card Games',
+                actionGames: 'Action Games',
+                settings: 'Settings',
+                backToMain: 'Back',
+                noGames: 'No Games Available',
+                // 难度选择界面
+                selectDifficulty: 'Select Difficulty',
+                easy: 'Easy',
+                normal: 'Normal',
+                hard: 'Hard',
+                random: 'Random',
+                exit: 'Exit',
+                resume: 'Resume',
+                history: 'History',
+                pauseInstructions: 'Press ESC to pause game',
+                // 游戏界面
+                score: 'Score',
+                birdsLeft: 'Birds Left',
+                gameOver: 'Game Over',
+                yourScore: 'Your Score',
+                continue: 'Continue',
+                // 历史记录
+                historyTitle: 'History',
+                noHistory: 'No Game Records',
+                // 设置
+                languageSwitch: 'Language Switch',
+                // 语言选项
+                chineseTraditional: 'Chinese Traditional',
+                chineseSimplified: 'Chinese Simplified',
+                english: 'English',
+                french: 'French',
+                russian: 'Russian',
+                danish: 'Danish',
+                japanese: 'Japanese',
+                dinka: 'Dinka'
+            },
+            'fr': {
+                title: 'Jeu du Royaume Éternel',
+                subtitle: 'Cliquez pour commencer et défier votre vitesse de réaction!',
+                startButton: 'Commencer le Jeu',
+                instructions: 'Appuyez sur espace ou cliquez sur le bouton de démarrage pour commencer',
+                // 游戏选择界面
+                allGames: 'Tous les Jeux',
+                shootingGames: 'Jeux de Tir',
+                drivingGames: 'Jeux de Conduite',
+                cardGames: 'Jeux de Cartes',
+                actionGames: 'Jeux d\'Action',
+                settings: 'Paramètres',
+                backToMain: 'Retour',
+                noGames: 'Aucun Jeu Disponible',
+                // 难度选择界面
+                selectDifficulty: 'Sélectionner la Difficulté',
+                easy: 'Facile',
+                normal: 'Normal',
+                hard: 'Difficile',
+                random: 'Aléatoire',
+                exit: 'Quitter',
+                resume: 'Reprendre',
+                history: 'Historique',
+                pauseInstructions: 'Appuyez sur ESC pour mettre en pause',
+                // 游戏界面
+                score: 'Score',
+                birdsLeft: 'Oiseaux Restants',
+                gameOver: 'Jeu Terminé',
+                yourScore: 'Votre Score',
+                continue: 'Continuer',
+                // 历史记录
+                historyTitle: 'Historique',
+                noHistory: 'Aucun Enregistrement de Jeu',
+                // 设置
+                languageSwitch: 'Changer de Langue',
+                // 语言选项
+                chineseTraditional: 'Chinois Traditionnel',
+                chineseSimplified: 'Chinois Simplifié',
+                english: 'Anglais',
+                french: 'Français',
+                russian: 'Russe',
+                danish: 'Danois',
+                japanese: 'Japonais',
+                dinka: 'Dinka'
+            },
+            'ru': {
+                title: 'Игра Вечного Царства',
+                subtitle: 'Нажмите начать, чтобы испытать свою скорость реакции!',
+                startButton: 'Начать Игру',
+                instructions: 'Нажмите пробел или кнопку начала для старта',
+                // 游戏选择界面
+                allGames: 'Все Игры',
+                shootingGames: 'Стрелялки',
+                drivingGames: 'Гонки',
+                cardGames: 'Карточные Игры',
+                actionGames: 'Экшен Игры',
+                settings: 'Настройки',
+                backToMain: 'Назад',
+                noGames: 'Игр Нет',
+                // 难度选择界面
+                selectDifficulty: 'Выбрать Сложность',
+                easy: 'Легко',
+                normal: 'Нормально',
+                hard: 'Сложно',
+                random: 'Случайно',
+                exit: 'Выход',
+                resume: 'Продолжить',
+                history: 'История',
+                pauseInstructions: 'Нажмите ESC для паузы',
+                // 游戏界面
+                score: 'Счет',
+                birdsLeft: 'Птиц Осталось',
+                gameOver: 'Игра Окончена',
+                yourScore: 'Ваш Счет',
+                continue: 'Продолжить',
+                // 历史记录
+                historyTitle: 'История',
+                noHistory: 'Нет Записей Игры',
+                // 设置
+                languageSwitch: 'Переключение Языка',
+                // 语言选项
+                chineseTraditional: 'Китайский Традиционный',
+                chineseSimplified: 'Китайский Упрощенный',
+                english: 'Английский',
+                french: 'Французский',
+                russian: 'Русский',
+                danish: 'Датский',
+                japanese: 'Японский',
+                dinka: 'Динка'
+            },
+            'da': {
+                title: 'Evigt Rige Spil',
+                subtitle: 'Klik start for at udfordre din reaktionsevne!',
+                startButton: 'Start Spil',
+                instructions: 'Tryk mellemrum eller klik start-knappen for at begynde',
+                // 游戏选择界面
+                allGames: 'Alle Spil',
+                shootingGames: 'Skydespil',
+                drivingGames: 'Kørespil',
+                cardGames: 'Kortspil',
+                actionGames: 'Handlingsspil',
+                settings: 'Indstillinger',
+                backToMain: 'Tilbage',
+                noGames: 'Ingen Spil Tilgængelige',
+                // 难度选择界面
+                selectDifficulty: 'Vælg Sværhedsgrad',
+                easy: 'Let',
+                normal: 'Normal',
+                hard: 'Svær',
+                random: 'Tilfældig',
+                exit: 'Afslut',
+                resume: 'Genoptag',
+                history: 'Historik',
+                pauseInstructions: 'Tryk ESC for at pause spillet',
+                // 游戏界面
+                score: 'Score',
+                birdsLeft: 'Fugle Tilbage',
+                gameOver: 'Spil Slut',
+                yourScore: 'Din Score',
+                continue: 'Fortsæt',
+                // 历史记录
+                historyTitle: 'Historik',
+                noHistory: 'Ingen Spiloptagelser',
+                // 设置
+                languageSwitch: 'Skift Sprog',
+                // 语言选项
+                chineseTraditional: 'Traditionelt Kinesisk',
+                chineseSimplified: 'Forenklet Kinesisk',
+                english: 'Engelsk',
+                french: 'Fransk',
+                russian: 'Russisk',
+                danish: 'Dansk',
+                japanese: 'Japansk',
+                dinka: 'Dinka'
+            },
+            'ja': {
+                title: 'エターナルレルムゲーム',
+                subtitle: 'クリックして開始、反応速度に挑戦！',
+                startButton: 'ゲーム開始',
+                instructions: 'スペースキーまたはスタートボタンをクリックして開始',
+                // 游戏选择界面
+                allGames: 'すべてのゲーム',
+                shootingGames: 'シューティングゲーム',
+                drivingGames: 'ドライビングゲーム',
+                cardGames: 'カードゲーム',
+                actionGames: 'アクションゲーム',
+                settings: '設定',
+                backToMain: '戻る',
+                noGames: '利用可能なゲームはありません',
+                // 难度选择界面
+                selectDifficulty: '難易度を選択',
+                easy: '簡単',
+                normal: '普通',
+                hard: '難しい',
+                random: 'ランダム',
+                exit: '終了',
+                resume: '再開',
+                history: '履歴',
+                pauseInstructions: 'ESCキーで一時停止',
+                // 游戏界面
+                score: 'スコア',
+                birdsLeft: '残りの鳥',
+                gameOver: 'ゲームオーバー',
+                yourScore: 'あなたのスコア',
+                continue: '続ける',
+                // 历史记录
+                historyTitle: '履歴',
+                noHistory: 'ゲーム記録はありません',
+                // 设置
+                languageSwitch: '言語切替',
+                // 语言选项
+                chineseTraditional: '繁体字中国語',
+                chineseSimplified: '簡体字中国語',
+                english: '英語',
+                french: 'フランス語',
+                russian: 'ロシア語',
+                danish: 'デンマーク語',
+                japanese: '日本語',
+                dinka: 'ディンカ語'
+            },
+            'din': {
+                title: 'Wëlëthëŋ de Kuɛ̈n ë Bɛ̈n',
+                subtitle: 'Cïïk jɔ̈k ku bɛn cïïk rɔt tɔ̈u!',
+                startButton: 'Cɔl Wëlëthëŋ',
+                instructions: 'Yiëc ku jɔl käŋ ëbɛ̈n ë cɔl wëlëthëŋ',
+                // 游戏选择界面
+                allGames: 'Wëlëthëŋ ë Bɛ̈n',
+                shootingGames: 'Wëlëthëŋ de Muɔ̈c',
+                drivingGames: 'Wëlëthëŋ de Tïŋ',
+                cardGames: 'Wëlëthëŋ de Käth',
+                actionGames: 'Wëlëthëŋ de Röt',
+                settings: 'Kɔc ë Tïŋ',
+                backToMain: 'Dɔm',
+                noGames: 'Wëlëthëŋ Aciɛ̈ɛ̈n',
+                // 难度选择界面
+                selectDifficulty: 'Yiëc ë Röt',
+                easy: 'Yiën',
+                normal: 'Këc',
+                hard: 'Röt',
+                random: 'Cït Man',
+                exit: 'Cɔk',
+                resume: 'Dɔm',
+                history: 'Wël ë Cïïk',
+                pauseInstructions: 'Yiëc ESC ku jɔl wëlëthëŋ',
+                // 游戏界面
+                score: 'Kuɔ̈ɔ̈r',
+                birdsLeft: 'Jɔɔk ë Cït',
+                gameOver: 'Wëlëthëŋ ë Cɔk',
+                yourScore: 'Kuɔ̈ɔ̈r ë Yen',
+                continue: 'Dɔm',
+                // 历史记录
+                historyTitle: 'Wël ë Cïïk',
+                noHistory: 'Wëlëthëŋ Aciɛ̈ɛ̈n ë Cïïk',
+                // 设置
+                languageSwitch: 'Yiëc ë Thuɔŋjäŋ',
+                // 语言选项
+                chineseTraditional: 'Thuɔŋjäŋ ë Ciɛn',
+                chineseSimplified: 'Thuɔŋjäŋ ë Ciɛn ë Yiën',
+                english: 'Thuɔŋjäŋ ë Ɣɛt',
+                french: 'Thuɔŋjäŋ ë Faransi',
+                russian: 'Thuɔŋjäŋ ë Rɔthia',
+                danish: 'Thuɔŋjäŋ ë Denmark',
+                japanese: 'Thuɔŋjäŋ ë Japan',
+                dinka: 'Thuɔŋjäŋ ë Dinka'
+            }
+        };
 
         // 初始化遊戲
         function init() {
@@ -461,22 +1012,45 @@
         // 設置事件監聽器
         function setupEventListeners() {
             // 開始按鈕
-            document.getElementById('startButton').addEventListener('click', showDifficultyScreen);
+            document.getElementById('startButton').addEventListener('click', showGameSelectionScreen);
+            
+            // 遊戲選擇界面標籤
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 如果點擊的是返回標籤，直接返回主畫面
+                    if (this.id === 'backToMainTab') {
+                        showMainScreen();
+                        return;
+                    }
+                    
+                    // 移除所有標籤的active類
+                    document.querySelectorAll('.category-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    // 添加active類到當前標籤
+                    this.classList.add('active');
+                    // 更新內容顯示
+                    updateContentDisplay(this.dataset.category);
+                });
+            });
             
             // 難度選擇按鈕
             document.getElementById('easyButton').addEventListener('click', () => startGame(Difficulty.EASY));
             document.getElementById('normalButton').addEventListener('click', () => startGame(Difficulty.NORMAL));
             document.getElementById('hardButton').addEventListener('click', () => startGame(Difficulty.HARD));
             document.getElementById('randomButton').addEventListener('click', startRandomGame);
-            document.getElementById('exitButton').addEventListener('click', showMainScreen);
+            document.getElementById('exitButton').addEventListener('click', showGameSelectionScreen);
             document.getElementById('resumeButton').addEventListener('click', resumeGame);
             
             // 歷史記錄按鈕
             document.getElementById('historyButton').addEventListener('click', showHistory);
             document.getElementById('closeHistory').addEventListener('click', hideHistory);
             
-            // 遊戲結束繼續按鈕
-            document.getElementById('continueButton').addEventListener('click', showDifficultyScreen);
+            // 遊戲結束繼續按鈕 - 修改為返回難度選擇頁面
+            document.getElementById('continueButton').addEventListener('click', function() {
+                document.getElementById('gameOverMessage').style.display = 'none';
+                showDifficultyScreen();
+            });
             
             // 鍵盤控制
             document.addEventListener('keydown', handleKeyDown);
@@ -486,6 +1060,159 @@
             
             // 滑鼠點擊
             document.addEventListener('click', handleClick);
+        }
+
+        // 顯示遊戲選擇界面
+        function showGameSelectionScreen() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('gameSelectionScreen').classList.remove('hidden');
+            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resumeButton').style.display = 'none';
+            document.getElementById('gameOverMessage').style.display = 'none';
+            hideHistory(); // 確保歷史記錄彈窗關閉
+            
+            // 初始化內容顯示
+            updateContentDisplay('all');
+            
+            currentState = GameState.GAME_SELECTION;
+        }
+
+        // 更新內容顯示
+        function updateContentDisplay(category) {
+            const contentDisplay = document.getElementById('contentDisplay');
+            contentDisplay.innerHTML = '';
+            
+            if (category === 'settings') {
+                // 顯示設定內容
+                const languageSection = document.createElement('div');
+                languageSection.className = 'language-section';
+                
+                const languageLabel = document.createElement('div');
+                languageLabel.className = 'language-label';
+                languageLabel.textContent = languageData[currentLanguage].languageSwitch;
+                
+                const languageSelector = document.createElement('div');
+                languageSelector.className = 'language-selector';
+                
+                const languageDisplay = document.createElement('div');
+                languageDisplay.className = 'language-display';
+                languageDisplay.innerHTML = `
+                    <span>${languageData['zh-TW'].chineseTraditional}</span>
+                    <span class="language-arrow">▼</span>
+                `;
+                
+                const languageOptions = document.createElement('div');
+                languageOptions.className = 'language-options';
+                
+                // 添加語言選項
+                const languages = [
+                    { code: 'zh-TW', name: languageData['zh-TW'].chineseTraditional },
+                    { code: 'zh-CN', name: languageData['zh-TW'].chineseSimplified },
+                    { code: 'en', name: languageData['zh-TW'].english },
+                    { code: 'fr', name: languageData['zh-TW'].french },
+                    { code: 'ru', name: languageData['zh-TW'].russian },
+                    { code: 'da', name: languageData['zh-TW'].danish },
+                    { code: 'ja', name: languageData['zh-TW'].japanese },
+                    { code: 'din', name: languageData['zh-TW'].dinka }
+                ];
+                
+                languages.forEach(lang => {
+                    const option = document.createElement('div');
+                    option.className = 'language-option';
+                    option.textContent = lang.name;
+                    option.dataset.lang = lang.code;
+                    option.addEventListener('click', function() {
+                        changeLanguage(this.dataset.lang);
+                        languageSelector.classList.remove('open');
+                    });
+                    languageOptions.appendChild(option);
+                });
+                
+                languageDisplay.addEventListener('click', function() {
+                    languageSelector.classList.toggle('open');
+                });
+                
+                languageSelector.appendChild(languageDisplay);
+                languageSelector.appendChild(languageOptions);
+                languageSection.appendChild(languageLabel);
+                languageSection.appendChild(languageSelector);
+                contentDisplay.appendChild(languageSection);
+            } else {
+                // 顯示遊戲內容
+                const gameList = games[category] || [];
+                
+                if (gameList.length === 0) {
+                    const noGames = document.createElement('div');
+                    noGames.className = 'no-games';
+                    noGames.textContent = languageData[currentLanguage].noGames;
+                    contentDisplay.appendChild(noGames);
+                } else {
+                    gameList.forEach(game => {
+                        const gameItem = document.createElement('div');
+                        gameItem.className = 'game-item';
+                        gameItem.innerHTML = `<h3>${game.name}</h3>`;
+                        gameItem.addEventListener('click', () => {
+                            if (game.id === 'birdShooting') {
+                                currentGameId = game.id;
+                                showDifficultyScreen();
+                            }
+                        });
+                        contentDisplay.appendChild(gameItem);
+                    });
+                }
+            }
+        }
+
+        // 更改語言
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const data = languageData[lang];
+            
+            // 更新主界面
+            document.querySelector('#mainScreen .title').textContent = data.title;
+            document.querySelector('#mainScreen .subtitle').textContent = data.subtitle;
+            document.getElementById('startButton').textContent = data.startButton;
+            document.querySelector('#mainScreen .instructions').textContent = data.instructions;
+            
+            // 更新游戏选择界面
+            document.querySelector('[data-category="all"]').textContent = data.allGames;
+            document.querySelector('[data-category="shooting"]').textContent = data.shootingGames;
+            document.querySelector('[data-category="driving"]').textContent = data.drivingGames;
+            document.querySelector('[data-category="card"]').textContent = data.cardGames;
+            document.querySelector('[data-category="action"]').textContent = data.actionGames;
+            document.querySelector('[data-category="settings"]').textContent = data.settings;
+            document.getElementById('backToMainTab').textContent = data.backToMain;
+            
+            // 更新难度选择界面
+            document.querySelector('#difficultyScreen .title').textContent = data.selectDifficulty;
+            document.getElementById('easyButton').textContent = data.easy;
+            document.getElementById('normalButton').textContent = data.normal;
+            document.getElementById('hardButton').textContent = data.hard;
+            document.getElementById('randomButton').textContent = data.random;
+            document.getElementById('exitButton').textContent = data.exit;
+            document.getElementById('resumeButton').textContent = data.resume;
+            document.getElementById('historyButton').textContent = data.history;
+            document.querySelector('#difficultyScreen .instructions').textContent = data.pauseInstructions;
+            
+            // 更新游戏界面
+            document.getElementById('score').textContent = `${data.score}: 0`;
+            document.getElementById('birdsLeft').textContent = `${data.birdsLeft}: 0`;
+            document.querySelector('#gameOverMessage h2').textContent = data.gameOver;
+            document.querySelector('#gameOverMessage p').textContent = `${data.yourScore}: `;
+            document.getElementById('continueButton').textContent = data.continue;
+            
+            // 更新历史记录
+            document.getElementById('historyTitle').textContent = data.historyTitle;
+            document.querySelector('.noHistory').textContent = data.noHistory;
+            
+            // 更新设置界面
+            if (document.querySelector('.language-label')) {
+                document.querySelector('.language-label').textContent = data.languageSwitch;
+            }
+            
+            // 更新游戏项目
+            updateContentDisplay(document.querySelector('.category-tab.active').dataset.category);
         }
 
         // 顯示歷史記錄
@@ -504,7 +1231,7 @@
             const historyContent = document.getElementById('historyContent');
             
             if (gameHistory.length === 0) {
-                historyContent.innerHTML = '<div class="noHistory">暫無遊戲記錄</div>';
+                historyContent.innerHTML = `<div class="noHistory">${languageData[currentLanguage].noHistory}</div>`;
                 return;
             }
             
@@ -514,9 +1241,10 @@
                     <div class="historyItem">
                         <div class="historyDetails">
                             <div>${record.date}</div>
-                            <div>難度: ${record.difficulty}</div>
+                            <div>${languageData[currentLanguage].difficulty || '難度'}: ${record.difficulty}</div>
+                            <div>遊戲: ${record.game}</div>
                         </div>
-                        <div class="historyScore">${record.score} 分</div>
+                        <div class="historyScore">${record.score} ${languageData[currentLanguage].score}</div>
                     </div>
                 `;
             });
@@ -538,7 +1266,7 @@
         }
 
         // 添加新的歷史記錄
-        function addHistoryRecord(score, difficulty) {
+        function addHistoryRecord(score, difficulty, game) {
             const now = new Date();
             const dateStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
             
@@ -546,7 +1274,8 @@
             gameHistory.unshift({
                 date: dateStr,
                 score: score,
-                difficulty: difficulty
+                difficulty: difficulty,
+                game: game
             });
             
             // 只保留最近的50條記錄
@@ -564,6 +1293,7 @@
         // 顯示難度選擇畫面
         function showDifficultyScreen() {
             document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('gameSelectionScreen').classList.add('hidden');
             document.getElementById('difficultyScreen').classList.remove('hidden');
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('resumeButton').style.display = 'none';
@@ -576,6 +1306,7 @@
         function showMainScreen() {
             document.getElementById('difficultyScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameSelectionScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             hideHistory(); // 確保歷史記錄彈窗關閉
             currentState = GameState.MAIN_MENU;
@@ -632,7 +1363,7 @@
             switch(e.code) {
                 case 'Space':
                     if (currentState === GameState.MAIN_MENU) {
-                        showDifficultyScreen();
+                        showGameSelectionScreen();
                     }
                     break;
                 case 'Escape':
@@ -678,13 +1409,13 @@
 
         // 更新分數顯示
         function updateScore() {
-            document.getElementById('score').textContent = `分數: ${score}`;
+            document.getElementById('score').textContent = `${languageData[currentLanguage].score}: ${score}`;
         }
 
         // 更新剩餘飛鳥顯示
         function updateBirdsLeft() {
             const birdsRemaining = currentDifficulty.birds - birdsKilled - birdsEscaped;
-            document.getElementById('birdsLeft').textContent = `剩餘飛鳥: ${birdsRemaining}`;
+            document.getElementById('birdsLeft').textContent = `${languageData[currentLanguage].birdsLeft}: ${birdsRemaining}`;
         }
 
         // 生成飛鳥
@@ -764,7 +1495,8 @@
             document.getElementById('finalScore').textContent = score;
             
             // 添加歷史記錄
-            addHistoryRecord(score, currentDifficulty.name);
+            const gameName = currentGameId === 'birdShooting' ? '飛鳥射擊遊戲' : '未知遊戲';
+            addHistoryRecord(score, currentDifficulty.name, gameName);
             
             // 顯示遊戲結束訊息
             setTimeout(() => {
