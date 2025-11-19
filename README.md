@@ -1,3 +1,5 @@
+## 點擊 [此處打開模擬器](https://41423117.github.io/Eternal-Realm-Games/)
+
 # w1
 
 # w9_11/6_12:41成功運行
