@@ -1,5 +1,8 @@
 ## 點擊 [此處打開模擬器](https://41423117.github.io/Eternal-Realm-Games/)
 
+### 影片展示
+<video src=".mp4" controls width="800"></video>
+
 ### 第 1 頁
 ![Page 1](folder/page01.png)
 
