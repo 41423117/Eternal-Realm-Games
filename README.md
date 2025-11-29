@@ -1,22 +1,22 @@
 ## 點擊 [此處打開模擬器](https://41423117.github.io/Eternal-Realm-Games/)
 
 ### 第 1 頁
-![Page 1](page01.png)
+![Page 1](folder/page01.png)
 
 ### 第 2 頁  
-![Page 2](page02.png)
+![Page 2](folder/page02.png)
 
 ### 第 3 頁
-![Page 3](page03.png)
+![Page 3](folder/page03.png)
 
 ### 第 4 頁  
-![Page 4](page04.png)
+![Page 4](folder/page04.png)
 
 ### 第 5 頁
-![Page 5](page05.png)
+![Page 5](folder/page05.png)
 
 ### 第 6 頁  
-![Page 6](page06.png)
+![Page 6](folder/page06.png)
 
 
 # w1
