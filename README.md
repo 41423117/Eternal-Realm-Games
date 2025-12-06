@@ -28,7 +28,7 @@
 ![Page 9](folder/page12.png)
 
 ### 第 10 頁  
-![Page 10](folder/page13.png)
+![Page 10](page13.png)
 
 ### 第 11 頁  
 ![Page 11](folder/page14.png)
