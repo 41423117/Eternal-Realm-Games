@@ -201,7 +201,7 @@ $\texttt{}$
 
 使用FileReader API讀取圖片檔案。
 
-將圖片以Base64格式保存到**localStorage**。
+將圖片以Base64格式保存到** localStorage **。
 
 使用CSS變數(--custom-background)套用背景圖片。
 
