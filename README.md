@@ -86,7 +86,8 @@
   改進了飛鳥消失邏輯。
 
   在 updateBirds() 函數中，現在會檢查飛鳥是否完全飛出畫面。
-  
+
+```text
 ** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
 * ```
   bird.x > gameCanvas.width + birdWidth/2。
