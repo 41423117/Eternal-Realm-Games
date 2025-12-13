@@ -88,10 +88,10 @@
   在 updateBirds() 函數中，現在會檢查飛鳥是否完全飛出畫面。
   
 ** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
-** * `
+* ```
   bird.x > gameCanvas.width + birdWidth/2。
 ** $\texttt{\`\`\`}$ 當飛鳥從右邊飛出時，檢查 bird.x
-** * `
+* ```
   bird.x < -birdWidth/2。
 $\texttt{}$
 
@@ -201,7 +201,7 @@ $\texttt{}$
 
 使用FileReader API讀取圖片檔案。
 
-將圖片以Base64格式保存到localStorage。
+將圖片以Base64格式保存到**localStorage**。
 
 使用CSS變數(--custom-background)套用背景圖片。
 
