@@ -234,27 +234,3 @@ $\texttt{}$
 與原有的語言系統整合。
 
 這樣使用者就可以自由更換遊戲的背景圖片，並且更換後的背景會永久保存，直到使用者手動重置。
-
-```text
-# 這裡開始是您提供的內容 (請重複複製多行，以觸發捲軸)
-
-** ``` 當飛鳥從左邊飛出時，檢查 bird.x
-* ```
-  bird.x > gameCanvas.width + birdWidth/2。
-** ``` 當飛鳥從右邊飛出時，檢查 bird.x
-* ```
-  bird.x < -birdWidth/2。
-# (重複內容...)
-** ``` 當飛鳥從左邊飛出時，檢查 bird.x
-* ```
-  bird.x > gameCanvas.width + birdWidth/2。
-** ``` 當飛鳥從右邊飛出時，檢查 bird.x
-* ```
-  bird.x < -birdWidth/2。
-# (重複內容...)
-** ``` 當飛鳥從左邊飛出時，檢查 bird.x
-* ```
-  bird.x > gameCanvas.width + birdWidth/2。
-** ``` 當飛鳥從右邊飛出時，檢查 bird.x
-* ```
-  bird.x < -birdWidth/2。
