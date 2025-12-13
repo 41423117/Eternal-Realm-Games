@@ -118,11 +118,11 @@ $\texttt{}$
 
 ### 數據持久化：
 
-  使用localStorage保存歷史記錄。
+  使用 localStorage 保存歷史記錄。
 
   即使關閉瀏覽器或刷新頁面，記錄仍然存在。
 
-  最多保存50條最近的記錄。
+  最多保存 50 條最近的記錄。
 
 
 ### 歷史記錄顯示：
@@ -199,15 +199,15 @@ $\texttt{}$
 
 ### 圖片處理與保存：
 
-使用FileReader API讀取圖片檔案。
+使用 FileReader API 讀取圖片檔案。
 
-將圖片以Base64格式保存到** localStorage **。
+將圖片以 Base64 格式保存到 localStorage。
 
 使用CSS變數(--custom-background)套用背景圖片。
 
 ### 持久化儲存：
 
-使用localStorage保存背景圖片。
+使用 localStorage 保存背景圖片。
 
 遊戲關閉或頁面重新整理後，背景圖片依然保留。
 
