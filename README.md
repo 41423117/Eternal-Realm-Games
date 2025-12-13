@@ -235,9 +235,25 @@ $\texttt{}$
 
 這樣使用者就可以自由更換遊戲的背景圖片，並且更換後的背景會永久保存，直到使用者手動重置。
 
-** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
+** $\texttt{\`\`\`text}$ 當飛鳥從左邊飛出時，檢查 bird.x
 * ```text
-* ```
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
   bird.x > gameCanvas.width + birdWidth/2。
   bird.x > gameCanvas.width + birdWidth/2。
   bird.x > gameCanvas.width + birdWidth/2。
