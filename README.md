@@ -235,7 +235,6 @@ $\texttt{}$
 
 這樣使用者就可以自由更換遊戲的背景圖片，並且更換後的背景會永久保存，直到使用者手動重置。
 
-```text
 ** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
 * ```
   bird.x > gameCanvas.width + birdWidth/2。
