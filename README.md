@@ -239,6 +239,20 @@ $\texttt{}$
 ** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
 * ```
   bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
 ** $\texttt{\`\`\`}$ 當飛鳥從右邊飛出時，檢查 bird.x
 * ```
   bird.x < -birdWidth/2。
