@@ -93,7 +93,7 @@
 ** $\texttt{\`\`\`}$ 當飛鳥從右邊飛出時，檢查 bird.x
 * ```
   bird.x < -birdWidth/2。
-* $\texttt{}$
+$\texttt{}$
 
   飛鳥飛出畫面後會從陣列中移除，並增加 birdsEscaped 計數。
 
