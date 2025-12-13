@@ -87,7 +87,6 @@
 
   在 updateBirds() 函數中，現在會檢查飛鳥是否完全飛出畫面。
 
-```text
 ** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
 * ```
   bird.x > gameCanvas.width + birdWidth/2。
@@ -235,3 +234,28 @@ $\texttt{}$
 與原有的語言系統整合。
 
 這樣使用者就可以自由更換遊戲的背景圖片，並且更換後的背景會永久保存，直到使用者手動重置。
+
+```text
+** $\texttt{\`\`\`}$ 當飛鳥從左邊飛出時，檢查 bird.x
+* ```
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+  bird.x > gameCanvas.width + birdWidth/2。
+** $\texttt{\`\`\`}$ 當飛鳥從右邊飛出時，檢查 bird.x
+* ```
+  bird.x < -birdWidth/2。
+$\texttt{}$
