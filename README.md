@@ -90,7 +90,7 @@
 **當飛鳥從左邊飛出時，檢查 bird.x：** $\texttt{\`\`\`}$ 
 * ```
   bird.x > gameCanvas.width + birdWidth/2
-**當飛鳥從右邊飛出時，檢查 bird.x:** $\texttt{\`\`\`}$ 
+**當飛鳥從右邊飛出時，檢查 bird.x：** $\texttt{\`\`\`}$ 
 * ```
   bird.x < -birdWidth/2
 $\texttt{}$
