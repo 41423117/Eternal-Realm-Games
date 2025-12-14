@@ -194,24 +194,24 @@
             width: 300px;
         }
         
-        /* 高科技機器手樣式 */
+        /* 高科技機器手樣式 - 修改為鎧甲風格 */
         .robotic-arm {
             position: absolute;
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
             pointer-events: none;
             z-index: 2;
             animation: armFloat 4s ease-in-out infinite;
         }
         
         .robotic-arm.left {
-            left: -50px;
+            left: -100px;
             top: 50%;
             transform: translateY(-50%);
         }
         
         .robotic-arm.right {
-            right: -50px;
+            right: -100px;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -221,225 +221,408 @@
                 transform: translateY(-50%) rotate(0deg);
             }
             25% {
-                transform: translateY(-45%) rotate(5deg);
+                transform: translateY(-45%) rotate(3deg);
             }
             50% {
                 transform: translateY(-50%) rotate(0deg);
             }
             75% {
-                transform: translateY(-55%) rotate(-5deg);
+                transform: translateY(-55%) rotate(-3deg);
             }
         }
         
-        /* 機器手部件 */
+        /* 機器手部件 - 鎧甲風格 */
         .arm-base {
             position: absolute;
-            background: linear-gradient(45deg, #2a2a4a, #4a4a6a);
-            border-radius: 10px;
+            background: linear-gradient(45deg, #3a3a3a, #2a2a2a);
+            border-radius: 15px;
             box-shadow: 
-                0 0 15px rgba(76, 201, 240, 0.5),
-                inset 0 0 10px rgba(0, 0, 0, 0.5);
+                0 0 20px rgba(76, 201, 240, 0.6),
+                inset 0 0 15px rgba(0, 0, 0, 0.7),
+                0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 3px solid #4cc9f0;
         }
         
         .arm-segment {
             position: absolute;
-            background: linear-gradient(90deg, #3a3a5a, #2a2a4a);
-            border-radius: 5px;
-            border: 2px solid #4cc9f0;
+            background: linear-gradient(90deg, #4a4a4a, #3a3a3a);
+            border-radius: 10px;
+            border: 3px solid #4cc9f0;
             box-shadow: 
-                0 0 10px rgba(76, 201, 240, 0.3),
-                inset 0 0 5px rgba(76, 201, 240, 0.2);
+                0 0 15px rgba(76, 201, 240, 0.4),
+                inset 0 0 10px rgba(76, 201, 240, 0.3),
+                0 3px 10px rgba(0, 0, 0, 0.4);
         }
         
         .arm-joint {
             position: absolute;
-            background: radial-gradient(circle at 30% 30%, #4cc9f0, #1a5a8a);
+            background: radial-gradient(circle at 30% 30%, #5cc9f0, #1a5a8a, #3a3a3a);
             border-radius: 50%;
             box-shadow: 
-                0 0 10px rgba(76, 201, 240, 0.8),
-                inset 0 0 5px rgba(255, 255, 255, 0.5);
+                0 0 15px rgba(76, 201, 240, 0.9),
+                inset 0 0 8px rgba(255, 255, 255, 0.6),
+                0 2px 10px rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffffff;
         }
         
         .arm-hand {
             position: absolute;
-            background: linear-gradient(45deg, #4a4a6a, #3a3a5a);
-            border-radius: 8px;
-            border: 2px solid #4cc9f0;
+            background: linear-gradient(45deg, #3a3a3a, #2a2a2a);
+            border-radius: 15px;
+            border: 3px solid #4cc9f0;
             box-shadow: 
-                0 0 15px rgba(76, 201, 240, 0.5),
-                inset 0 0 8px rgba(76, 201, 240, 0.3);
+                0 0 20px rgba(76, 201, 240, 0.5),
+                inset 0 0 15px rgba(76, 201, 240, 0.2),
+                0 5px 15px rgba(0, 0, 0, 0.5);
         }
         
         .hand-finger {
             position: absolute;
-            background: linear-gradient(90deg, #3a3a5a, #4cc9f0);
-            border-radius: 3px;
-            box-shadow: 0 0 5px rgba(76, 201, 240, 0.5);
+            background: linear-gradient(90deg, #4a4a4a, #3a3a3a);
+            border-radius: 8px;
+            box-shadow: 
+                0 0 10px rgba(76, 201, 240, 0.5),
+                inset 0 0 5px rgba(76, 201, 240, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.4);
+            border: 2px solid #4cc9f0;
         }
         
-        /* 左側機器手具體結構 */
+        /* 新增鎧甲板塊細節 */
+        .arm-plate {
+            position: absolute;
+            background: linear-gradient(45deg, #333333, #444444);
+            border-radius: 5px;
+            border: 1px solid #5cc9f0;
+            box-shadow: 
+                inset 0 0 8px rgba(76, 201, 240, 0.3),
+                0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .arm-rivet {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, #4cc9f0, #2a5a7a);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 5px rgba(76, 201, 240, 0.8),
+                inset 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 左側機器手具體結構 - 鎧甲風格 */
         .robotic-arm.left .arm-base {
-            width: 60px;
-            height: 80px;
+            width: 80px;
+            height: 100px;
             left: 0;
-            top: 110px;
+            top: 150px;
         }
         
         .robotic-arm.left .arm-joint-1 {
-            width: 40px;
-            height: 40px;
-            left: 50px;
-            top: 120px;
+            width: 60px;
+            height: 60px;
+            left: 60px;
+            top: 140px;
             animation: jointRotate1 3s ease-in-out infinite;
         }
         
         .robotic-arm.left .arm-segment-1 {
-            width: 120px;
+            width: 180px;
+            height: 30px;
+            left: 90px;
+            top: 145px;
+            transform: rotate(-15deg);
+        }
+        
+        /* 上臂鎧甲板塊 */
+        .robotic-arm.left .plate-1 {
+            width: 160px;
             height: 20px;
-            left: 70px;
-            top: 130px;
-            transform: rotate(-20deg);
+            left: 100px;
+            top: 150px;
+            transform: rotate(-15deg);
         }
         
         .robotic-arm.left .arm-joint-2 {
-            width: 35px;
-            height: 35px;
-            left: 175px;
-            top: 100px;
+            width: 55px;
+            height: 55px;
+            left: 230px;
+            top: 110px;
             animation: jointRotate2 3s ease-in-out infinite reverse;
         }
         
         .robotic-arm.left .arm-segment-2 {
-            width: 100px;
+            width: 150px;
+            height: 28px;
+            left: 260px;
+            top: 118px;
+            transform: rotate(10deg);
+        }
+        
+        /* 前臂鎧甲板塊 */
+        .robotic-arm.left .plate-2 {
+            width: 140px;
             height: 18px;
-            left: 190px;
-            top: 108px;
-            transform: rotate(15deg);
+            left: 265px;
+            top: 123px;
+            transform: rotate(10deg);
         }
         
         .robotic-arm.left .arm-hand {
-            width: 50px;
-            height: 40px;
-            left: 280px;
-            top: 100px;
-            transform: rotate(10deg);
+            width: 70px;
+            height: 60px;
+            left: 380px;
+            top: 95px;
+            transform: rotate(8deg);
         }
         
+        /* 手指結構 - 更分明突出的鎧甲手指 */
         .robotic-arm.left .finger-1 {
-            width: 12px;
-            height: 30px;
-            left: 5px;
-            top: 5px;
-            transform: rotate(-10deg);
+            width: 18px;
+            height: 50px;
+            left: 8px;
+            top: -40px;
+            transform: rotate(-15deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
         }
         
         .robotic-arm.left .finger-2 {
-            width: 12px;
-            height: 35px;
-            left: 18px;
-            top: 3px;
+            width: 18px;
+            height: 60px;
+            left: 28px;
+            top: -45px;
             transform: rotate(0deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
         }
         
         .robotic-arm.left .finger-3 {
-            width: 12px;
-            height: 30px;
-            left: 31px;
-            top: 5px;
-            transform: rotate(10deg);
+            width: 18px;
+            height: 55px;
+            left: 48px;
+            top: -42px;
+            transform: rotate(12deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
         }
         
-        /* 右側機器手具體結構 */
+        /* 新增大拇指 */
+        .robotic-arm.left .finger-thumb {
+            width: 16px;
+            height: 35px;
+            left: -10px;
+            top: 5px;
+            transform: rotate(-45deg);
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        /* 新增小拇指 */
+        .robotic-arm.left .finger-little {
+            width: 15px;
+            height: 45px;
+            left: 60px;
+            top: -35px;
+            transform: rotate(25deg);
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        /* 手指關節細節 */
+        .robotic-arm.left .finger-joint {
+            position: absolute;
+            width: 12px;
+            height: 8px;
+            background: #4cc9f0;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(76, 201, 240, 0.8);
+        }
+        
+        .robotic-arm.left .joint-1 { top: 15px; left: 3px; }
+        .robotic-arm.left .joint-2 { top: 30px; left: 3px; }
+        .robotic-arm.left .joint-3 { top: 45px; left: 3px; }
+        
+        /* 右側機器手具體結構 - 鎧甲風格 */
         .robotic-arm.right .arm-base {
-            width: 60px;
-            height: 80px;
+            width: 80px;
+            height: 100px;
             right: 0;
-            top: 110px;
+            top: 150px;
         }
         
         .robotic-arm.right .arm-joint-1 {
-            width: 40px;
-            height: 40px;
-            right: 50px;
-            top: 120px;
+            width: 60px;
+            height: 60px;
+            right: 60px;
+            top: 140px;
             animation: jointRotate1 3s ease-in-out infinite reverse;
         }
         
         .robotic-arm.right .arm-segment-1 {
-            width: 120px;
+            width: 180px;
+            height: 30px;
+            right: 90px;
+            top: 145px;
+            transform: rotate(15deg);
+        }
+        
+        /* 上臂鎧甲板塊 */
+        .robotic-arm.right .plate-1 {
+            width: 160px;
             height: 20px;
-            right: 70px;
-            top: 130px;
-            transform: rotate(20deg);
+            right: 100px;
+            top: 150px;
+            transform: rotate(15deg);
         }
         
         .robotic-arm.right .arm-joint-2 {
-            width: 35px;
-            height: 35px;
-            right: 175px;
-            top: 100px;
+            width: 55px;
+            height: 55px;
+            right: 230px;
+            top: 110px;
             animation: jointRotate2 3s ease-in-out infinite;
         }
         
         .robotic-arm.right .arm-segment-2 {
-            width: 100px;
+            width: 150px;
+            height: 28px;
+            right: 260px;
+            top: 118px;
+            transform: rotate(-10deg);
+        }
+        
+        /* 前臂鎧甲板塊 */
+        .robotic-arm.right .plate-2 {
+            width: 140px;
             height: 18px;
-            right: 190px;
-            top: 108px;
-            transform: rotate(-15deg);
+            right: 265px;
+            top: 123px;
+            transform: rotate(-10deg);
         }
         
         .robotic-arm.right .arm-hand {
-            width: 50px;
-            height: 40px;
-            right: 280px;
-            top: 100px;
-            transform: rotate(-10deg);
+            width: 70px;
+            height: 60px;
+            right: 380px;
+            top: 95px;
+            transform: rotate(-8deg);
         }
         
+        /* 手指結構 - 更分明突出的鎧甲手指 */
         .robotic-arm.right .finger-1 {
-            width: 12px;
-            height: 30px;
-            right: 5px;
-            top: 5px;
-            transform: rotate(10deg);
+            width: 18px;
+            height: 50px;
+            right: 8px;
+            top: -40px;
+            transform: rotate(15deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
         }
         
         .robotic-arm.right .finger-2 {
-            width: 12px;
-            height: 35px;
-            right: 18px;
-            top: 3px;
+            width: 18px;
+            height: 60px;
+            right: 28px;
+            top: -45px;
             transform: rotate(0deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
         }
         
         .robotic-arm.right .finger-3 {
-            width: 12px;
-            height: 30px;
-            right: 31px;
+            width: 18px;
+            height: 55px;
+            right: 48px;
+            top: -42px;
+            transform: rotate(-12deg);
+            border-radius: 9px 9px 0 0;
+            border-bottom: none;
+        }
+        
+        /* 新增大拇指 */
+        .robotic-arm.right .finger-thumb {
+            width: 16px;
+            height: 35px;
+            right: -10px;
             top: 5px;
-            transform: rotate(-10deg);
+            transform: rotate(45deg);
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        /* 新增小拇指 */
+        .robotic-arm.right .finger-little {
+            width: 15px;
+            height: 45px;
+            right: 60px;
+            top: -35px;
+            transform: rotate(-25deg);
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        /* 手指關節細節 */
+        .robotic-arm.right .finger-joint {
+            position: absolute;
+            width: 12px;
+            height: 8px;
+            background: #4cc9f0;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(76, 201, 240, 0.8);
+        }
+        
+        .robotic-arm.right .joint-1 { top: 15px; right: 3px; }
+        .robotic-arm.right .joint-2 { top: 30px; right: 3px; }
+        .robotic-arm.right .joint-3 { top: 45px; right: 3px; }
+        
+        /* 新增螺栓/鉚釘裝飾 */
+        .robotic-arm .rivet-1 {
+            width: 10px;
+            height: 10px;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .robotic-arm .rivet-2 {
+            width: 10px;
+            height: 10px;
+            bottom: 10px;
+            left: 10px;
+        }
+        
+        .robotic-arm .rivet-3 {
+            width: 10px;
+            height: 10px;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .robotic-arm .rivet-4 {
+            width: 10px;
+            height: 10px;
+            bottom: 10px;
+            right: 10px;
         }
         
         @keyframes jointRotate1 {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(10deg); }
+            50% { transform: rotate(8deg); }
         }
         
         @keyframes jointRotate2 {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-15deg); }
+            50% { transform: rotate(-12deg); }
         }
         
-        /* 增加光效 */
+        /* 增強光效 */
         .robotic-arm::before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(76, 201, 240, 0.2), transparent 70%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle at center, rgba(76, 201, 240, 0.3), transparent 70%);
             z-index: -1;
-            filter: blur(20px);
+            filter: blur(25px);
+            top: -10%;
+            left: -10%;
         }
         
         /* 新增科技感光點 */
@@ -1118,29 +1301,71 @@
             
             <!-- 左側機器手 -->
             <div class="robotic-arm left">
-                <div class="arm-base"></div>
+                <div class="arm-base">
+                    <div class="arm-rivet rivet-1"></div>
+                    <div class="arm-rivet rivet-2"></div>
+                    <div class="arm-rivet rivet-3"></div>
+                    <div class="arm-rivet rivet-4"></div>
+                </div>
                 <div class="arm-joint arm-joint-1"></div>
                 <div class="arm-segment arm-segment-1"></div>
+                <div class="arm-plate plate-1"></div>
                 <div class="arm-joint arm-joint-2"></div>
                 <div class="arm-segment arm-segment-2"></div>
+                <div class="arm-plate plate-2"></div>
                 <div class="arm-hand">
-                    <div class="hand-finger finger-1"></div>
-                    <div class="hand-finger finger-2"></div>
-                    <div class="hand-finger finger-3"></div>
+                    <div class="hand-finger finger-thumb"></div>
+                    <div class="hand-finger finger-1">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-2">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-3">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-little"></div>
                 </div>
             </div>
             
             <!-- 右側機器手 -->
             <div class="robotic-arm right">
-                <div class="arm-base"></div>
+                <div class="arm-base">
+                    <div class="arm-rivet rivet-1"></div>
+                    <div class="arm-rivet rivet-2"></div>
+                    <div class="arm-rivet rivet-3"></div>
+                    <div class="arm-rivet rivet-4"></div>
+                </div>
                 <div class="arm-joint arm-joint-1"></div>
                 <div class="arm-segment arm-segment-1"></div>
+                <div class="arm-plate plate-1"></div>
                 <div class="arm-joint arm-joint-2"></div>
                 <div class="arm-segment arm-segment-2"></div>
+                <div class="arm-plate plate-2"></div>
                 <div class="arm-hand">
-                    <div class="hand-finger finger-1"></div>
-                    <div class="hand-finger finger-2"></div>
-                    <div class="hand-finger finger-3"></div>
+                    <div class="hand-finger finger-thumb"></div>
+                    <div class="hand-finger finger-1">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-2">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-3">
+                        <div class="finger-joint joint-1"></div>
+                        <div class="finger-joint joint-2"></div>
+                        <div class="finger-joint joint-3"></div>
+                    </div>
+                    <div class="hand-finger finger-little"></div>
                 </div>
             </div>
             
