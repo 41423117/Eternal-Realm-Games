@@ -730,6 +730,16 @@
             z-index: 100;
         }
         
+        #timeLeft {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #4cc9f0;
+            z-index: 100;
+            display: none;
+        }
+        
         .instructions {
             position: absolute;
             bottom: 20px;
@@ -1412,6 +1422,7 @@
             <canvas id="gameCanvas"></canvas>
             <div id="score">分數: 0</div>
             <div id="birdsLeft">剩餘飛鳥: 0</div>
+            <div id="timeLeft">剩餘時間: 40秒</div>
             <div id="gameOverMessage">
                 <h2>遊戲結束</h2>
                 <p>你的分數: <span id="finalScore">0</span></p>
@@ -1479,28 +1490,55 @@
             GAME_OVER: 5
         };
 
-        // 難度設定
+        // 難度設定 - 修改隨機模式的設定
         const Difficulty = {
             EASY: {
                 birds: 15,
                 speed: 2,
                 spawnMin: 1000,
                 spawnMax: 2500,
-                name: "簡單"
+                name: "簡單",
+                hasBombs: false, // 簡單模式沒有炸彈
+                bombSpawnMin: 0,
+                bombSpawnMax: 0
             },
             NORMAL: {
                 birds: 20,
                 speed: 2.3,
                 spawnMin: 800,
                 spawnMax: 2200,
-                name: "一般"
+                name: "一般",
+                hasBombs: true, // 一般模式有炸彈
+                bombSpawnMin: 4000, // 4秒
+                bombSpawnMax: 8000, // 8秒
+                bombSize: 60, // 一般模式炸彈大小固定為60
+                bombPenalty: 10 // 扣10分
             },
             HARD: {
                 birds: 30,
                 speed: 2.8,
                 spawnMin: 600,
                 spawnMax: 1800,
-                name: "困難"
+                name: "困難",
+                hasBombs: true, // 困難模式有炸彈
+                bombSpawnMin: 1500, // 1.5秒
+                bombSpawnMax: 3500, // 3.5秒
+                bombSize: 60, // 困難模式炸彈大小固定為60
+                bombPenalty: 10 // 扣10分
+            },
+            RANDOM: {
+                birds: Infinity, // 無限生成飛鳥
+                timeLimit: 40000, // 40秒遊戲時間
+                speed: 2.5,
+                spawnMin: 1000,   // 1秒
+                spawnMax: 4500,   // 4.5秒
+                name: "隨機",
+                hasBombs: true, // 隨機模式有炸彈
+                bombSpawnMin: 500, // 0.5秒
+                bombSpawnMax: 5000, // 5秒，不規律
+                bombSizes: [20, 30, 40], // 自定義炸彈大小：直徑1、1.5、2倍（基數20）
+                bombPenalties: [5, 10, 20], // 對應的扣分
+                bombSize: "custom" // 表示使用自定義大小
             }
         };
 
@@ -1509,16 +1547,24 @@
         let currentDifficulty = Difficulty.EASY;
         let score = 0;
         let birds = [];
+        let bombs = []; // 新增炸彈陣列
         let birdsSpawned = 0;
         let birdsKilled = 0;
         let birdsEscaped = 0; // 記錄逃脫的飛鳥數量
         let lastSpawnTime = 0;
+        let lastBombSpawnTime = 0; // 記錄上次生成炸彈的時間
+        let bombSpawnInterval = 0; // 炸彈生成間隔
         let gameCanvas, ctx;
         let crosshair;
         let gameHistory = [];
         let currentLanguage = 'zh-TW';
         let currentGameId = 'birdShooting';
         let selectedBackgroundFile = null;
+        
+        // 新增計時相關變數
+        let gameStartTime = 0;
+        let gameTimer = null;
+        let isRandomMode = false;
 
         // 游戏数据
         const games = {
@@ -1561,6 +1607,7 @@
                 // 游戏界面
                 score: '分數',
                 birdsLeft: '剩餘飛鳥',
+                timeLeft: '剩餘時間',
                 gameOver: '遊戲結束',
                 yourScore: '你的分數',
                 continue: '繼續',
@@ -1615,6 +1662,7 @@
                 // 游戏界面
                 score: '分数',
                 birdsLeft: '剩余飞鸟',
+                timeLeft: '剩余时间',
                 gameOver: '游戏结束',
                 yourScore: '你的分数',
                 continue: '继续',
@@ -1669,6 +1717,7 @@
                 // 游戏界面
                 score: 'Score',
                 birdsLeft: 'Birds Left',
+                timeLeft: 'Time Left',
                 gameOver: 'Game Over',
                 yourScore: 'Your Score',
                 continue: 'Continue',
@@ -2084,6 +2133,7 @@
             // 更新游戏界面
             document.getElementById('score').textContent = `${data.score}: 0`;
             document.getElementById('birdsLeft').textContent = `${data.birdsLeft}: 0`;
+            document.getElementById('timeLeft').textContent = `${data.timeLeft}: 40秒`;
             document.querySelector('#gameOverMessage h2').textContent = data.gameOver;
             document.querySelector('#gameOverMessage p').textContent = `${data.yourScore}: `;
             document.getElementById('continueButton').textContent = data.continue;
@@ -2231,10 +2281,32 @@
             currentDifficulty = difficulty;
             score = 0;
             birds = [];
+            bombs = []; // 重置炸彈
             birdsSpawned = 0;
             birdsKilled = 0;
             birdsEscaped = 0; // 重置逃脫的飛鳥數量
             lastSpawnTime = 0;
+            lastBombSpawnTime = 0; // 重置炸彈生成時間
+            bombSpawnInterval = 0; // 重置炸彈生成間隔
+            
+            // 檢查是否為隨機模式
+            isRandomMode = currentDifficulty.name === "隨機";
+            
+            // 如果是隨機模式，初始化計時器
+            if (isRandomMode) {
+                gameStartTime = Date.now();
+                document.getElementById('timeLeft').style.display = 'block';
+                document.getElementById('birdsLeft').style.display = 'none';
+                updateTimeLeft();
+                
+                // 設置計時器
+                if (gameTimer) clearInterval(gameTimer);
+                gameTimer = setInterval(updateTimeLeft, 100);
+            } else {
+                // 非隨機模式，顯示剩餘飛鳥
+                document.getElementById('birdsLeft').style.display = 'block';
+                document.getElementById('timeLeft').style.display = 'none';
+            }
             
             document.getElementById('difficultyScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
@@ -2247,11 +2319,26 @@
             currentState = GameState.PLAYING;
         }
 
+        // 更新剩餘時間（隨機模式專用）
+        function updateTimeLeft() {
+            if (!isRandomMode || currentState !== GameState.PLAYING) return;
+            
+            const elapsed = Date.now() - gameStartTime;
+            const timeLeft = Math.max(0, currentDifficulty.timeLimit - elapsed);
+            const secondsLeft = Math.ceil(timeLeft / 1000);
+            
+            document.getElementById('timeLeft').textContent = 
+                `${languageData[currentLanguage].timeLeft}: ${secondsLeft}秒`;
+            
+            // 檢查時間是否結束
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
         // 開始隨機難度遊戲
         function startRandomGame() {
-            const difficulties = [Difficulty.EASY, Difficulty.NORMAL, Difficulty.HARD];
-            const randomIndex = Math.floor(Math.random() * difficulties.length);
-            startGame(difficulties[randomIndex]);
+            startGame(Difficulty.RANDOM);
         }
 
         // 繼續遊戲
@@ -2261,6 +2348,11 @@
             document.getElementById('resumeButton').style.display = 'none';
             crosshair.style.display = 'block';
             currentState = GameState.PLAYING;
+            
+            // 如果是隨機模式，重新開始計時器
+            if (isRandomMode) {
+                gameTimer = setInterval(updateTimeLeft, 100);
+            }
         }
 
         // 暫停遊戲
@@ -2270,6 +2362,12 @@
             document.getElementById('resumeButton').style.display = 'block';
             crosshair.style.display = 'none';
             currentState = GameState.PAUSED;
+            
+            // 如果是隨機模式，暫停計時器
+            if (isRandomMode && gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
         }
 
         // 處理鍵盤輸入
@@ -2294,13 +2392,33 @@
             crosshair.style.top = (e.clientY - 20) + 'px';
         }
 
-        // 處理點擊事件
+        // 處理點擊事件 - 新增炸彈點擊檢測
         function handleClick(e) {
             if (currentState !== GameState.PLAYING) return;
             
             const clickRadius = 30; // 點擊範圍為圓圈的1.5倍
             const mouseX = e.clientX;
             const mouseY = e.clientY;
+            
+            // 先檢查是否點擊到炸彈（炸彈優先級高）
+            for (let i = bombs.length - 1; i >= 0; i--) {
+                const bomb = bombs[i];
+                const distance = Math.sqrt(
+                    Math.pow(mouseX - bomb.x, 2) + Math.pow(mouseY - bomb.y, 2)
+                );
+                
+                if (distance < bomb.width/2 + 10) { // 炸彈點擊範圍稍大
+                    // 點擊到炸彈，扣分
+                    bombs.splice(i, 1);
+                    score = Math.max(0, score - bomb.penalty); // 分數不會低於0
+                    
+                    // 顯示扣分動畫
+                    showPenaltyAnimation(mouseX, mouseY, bomb.penalty);
+                    
+                    updateScore();
+                    return; // 點到炸彈後就不檢查飛鳥了
+                }
+            }
             
             // 檢查是否點擊到飛鳥
             for (let i = birds.length - 1; i >= 0; i--) {
@@ -2321,6 +2439,37 @@
             }
         }
 
+        // 顯示扣分動畫
+        function showPenaltyAnimation(x, y, penalty) {
+            const penaltyText = document.createElement('div');
+            penaltyText.textContent = `-${penalty}`;
+            penaltyText.style.position = 'absolute';
+            penaltyText.style.left = x + 'px';
+            penaltyText.style.top = y + 'px';
+            penaltyText.style.color = '#FF0000';
+            penaltyText.style.fontSize = '24px';
+            penaltyText.style.fontWeight = 'bold';
+            penaltyText.style.textShadow = '0 0 5px #FFFFFF';
+            penaltyText.style.pointerEvents = 'none';
+            penaltyText.style.zIndex = '1001';
+            penaltyText.style.transition = 'all 0.8s ease-out';
+            
+            document.getElementById('gameContainer').appendChild(penaltyText);
+            
+            // 動畫效果
+            setTimeout(() => {
+                penaltyText.style.transform = 'translateY(-50px)';
+                penaltyText.style.opacity = '0';
+            }, 10);
+            
+            // 移除元素
+            setTimeout(() => {
+                if (penaltyText.parentNode) {
+                    penaltyText.parentNode.removeChild(penaltyText);
+                }
+            }, 900);
+        }
+
         // 更新分數顯示
         function updateScore() {
             document.getElementById('score').textContent = `${languageData[currentLanguage].score}: ${score}`;
@@ -2328,6 +2477,8 @@
 
         // 更新剩餘飛鳥顯示
         function updateBirdsLeft() {
+            if (isRandomMode) return; // 隨機模式不顯示剩餘飛鳥
+            
             const birdsRemaining = currentDifficulty.birds - birdsKilled - birdsEscaped;
             document.getElementById('birdsLeft').textContent = `${languageData[currentLanguage].birdsLeft}: ${birdsRemaining}`;
         }
@@ -2335,37 +2486,116 @@
         // 生成飛鳥
         function spawnBird() {
             const now = Date.now();
-            if (birdsSpawned < currentDifficulty.birds && 
+            
+            // 隨機模式：使用1~4.5秒隨機生成
+            if (isRandomMode) {
+                if (now - lastSpawnTime > getRandomSpawnTimeForRandomMode()) {
+                    createBird();
+                    lastSpawnTime = now;
+                }
+            } 
+            // 其他模式：按照原來的邏輯生成
+            else if (birdsSpawned < currentDifficulty.birds && 
                 now - lastSpawnTime > getRandomSpawnTime()) {
-                
-                // 隨機決定從左邊還是右邊生成
-                const fromLeft = Math.random() > 0.5;
-                const x = fromLeft ? -50 : gameCanvas.width + 50;
-                const y = Math.random() * (gameCanvas.height - 100) + 50;
-                
-                // 飛鳥屬性
-                const bird = {
-                    x: x,
-                    y: y,
-                    width: 60,
-                    height: 30,
-                    speed: currentDifficulty.speed * (fromLeft ? 1 : -1),
-                    color: getRandomColor(),
-                    fromLeft: fromLeft
-                };
-                
-                birds.push(bird);
-                birdsSpawned++;
+                createBird();
                 lastSpawnTime = now;
                 updateBirdsLeft();
             }
         }
 
-        // 獲取隨機生成時間
+        // 創建飛鳥（共用函數）
+        function createBird() {
+            // 隨機決定從左邊還是右邊生成
+            const fromLeft = Math.random() > 0.5;
+            const x = fromLeft ? -50 : gameCanvas.width + 50;
+            const y = Math.random() * (gameCanvas.height - 100) + 50;
+            
+            // 飛鳥屬性
+            const bird = {
+                x: x,
+                y: y,
+                width: 60,
+                height: 30,
+                speed: currentDifficulty.speed * (fromLeft ? 1 : -1),
+                color: getRandomColor(),
+                fromLeft: fromLeft
+            };
+            
+            birds.push(bird);
+            birdsSpawned++;
+        }
+
+        // 生成炸彈 - 修改隨機模式的炸彈生成邏輯
+        function spawnBomb() {
+            if (!currentDifficulty.hasBombs) return;
+            
+            const now = Date.now();
+            if (now - lastBombSpawnTime > bombSpawnInterval) {
+                // 隨機決定從左邊還是右邊生成
+                const fromLeft = Math.random() > 0.5;
+                const x = fromLeft ? -50 : gameCanvas.width + 50;
+                const y = Math.random() * (gameCanvas.height - 100) + 50;
+                
+                // 炸彈屬性
+                let bombSize, bombWidth, bombHeight, bombPenalty;
+                
+                if (currentDifficulty.name === "隨機") {
+                    // 隨機模式使用自定義大小：直徑1、1.5、2倍
+                    const sizeIndex = Math.floor(Math.random() * 3); // 0, 1, 2
+                    bombWidth = currentDifficulty.bombSizes[sizeIndex];
+                    bombHeight = currentDifficulty.bombSizes[sizeIndex];
+                    bombPenalty = currentDifficulty.bombPenalties[sizeIndex];
+                    
+                    // 設定炸彈大小名稱
+                    if (bombWidth === 20) {
+                        bombSize = "small";
+                    } else if (bombWidth === 30) {
+                        bombSize = "medium";
+                    } else {
+                        bombSize = "large";
+                    }
+                } else {
+                    // 一般和困難模式保持原有大小
+                    bombSize = "medium";
+                    bombWidth = currentDifficulty.bombSize;
+                    bombHeight = currentDifficulty.bombSize;
+                    bombPenalty = currentDifficulty.bombPenalty;
+                }
+                
+                const bomb = {
+                    x: x,
+                    y: y,
+                    width: bombWidth,
+                    height: bombHeight,
+                    size: bombSize,
+                    speed: currentDifficulty.speed * (fromLeft ? 1 : -1),
+                    penalty: bombPenalty,
+                    fromLeft: fromLeft,
+                    rotation: 0,
+                    rotationSpeed: (Math.random() * 4 + 2) * (Math.random() > 0.5 ? 1 : -1) // 旋轉速度
+                };
+                
+                bombs.push(bomb);
+                
+                // 設置下一次生成的時間間隔
+                bombSpawnInterval = Math.random() * 
+                    (currentDifficulty.bombSpawnMax - currentDifficulty.bombSpawnMin) + 
+                    currentDifficulty.bombSpawnMin;
+                
+                lastBombSpawnTime = now;
+            }
+        }
+
+        // 獲取隨機生成時間（非隨機模式）
         function getRandomSpawnTime() {
             return Math.random() * 
                 (currentDifficulty.spawnMax - currentDifficulty.spawnMin) + 
                 currentDifficulty.spawnMin;
+        }
+
+        // 獲取隨機生成時間（隨機模式專用：1~4.5秒）
+        function getRandomSpawnTimeForRandomMode() {
+            return Math.random() * (4500 - 1000) + 1000; // 1000ms to 4500ms (1-4.5秒)
         }
 
         // 獲取隨機顏色
@@ -2395,8 +2625,31 @@
             }
             
             // 檢查遊戲是否結束
-            if (birdsSpawned >= currentDifficulty.birds && birds.length === 0) {
-                endGame();
+            if (isRandomMode) {
+                // 隨機模式：只檢查時間，時間到時在updateTimeLeft中結束遊戲
+                return;
+            } else {
+                // 其他模式：所有飛鳥都生成完畢且所有飛鳥都消失
+                if (birdsSpawned >= currentDifficulty.birds && birds.length === 0) {
+                    endGame();
+                }
+            }
+        }
+
+        // 更新炸彈位置
+        function updateBombs() {
+            for (let i = bombs.length - 1; i >= 0; i--) {
+                const bomb = bombs[i];
+                bomb.x += bomb.speed;
+                bomb.rotation += bomb.rotationSpeed * 0.05;
+                
+                // 檢查是否飛出畫面
+                const bombWidth = bomb.width;
+                if ((bomb.fromLeft && bomb.x > gameCanvas.width + bombWidth/2) || 
+                    (!bomb.fromLeft && bomb.x < -bombWidth/2)) {
+                    // 炸彈飛出畫面，移除
+                    bombs.splice(i, 1);
+                }
             }
         }
 
@@ -2404,6 +2657,15 @@
         function endGame() {
             currentState = GameState.GAME_OVER;
             crosshair.style.display = 'none';
+            
+            // 停止計時器（如果是隨機模式）
+            if (isRandomMode && gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            // 清空炸彈
+            bombs = [];
             
             // 更新最終分數顯示
             document.getElementById('finalScore').textContent = score;
@@ -2461,6 +2723,93 @@
             });
         }
 
+        // 繪製炸彈 - 修改隨機模式炸彈的繪製
+        function drawBombs() {
+            bombs.forEach(bomb => {
+                ctx.save();
+                ctx.translate(bomb.x, bomb.y);
+                ctx.rotate(bomb.rotation);
+                
+                // 根據炸彈大小和模式設定顏色
+                let bombColor, innerColor, sparkColor;
+                
+                if (currentDifficulty.name === "隨機") {
+                    // 隨機模式使用不同顏色區分大小
+                    if (bomb.size === "large") {
+                        bombColor = '#FF3333'; // 亮紅色
+                        innerColor = '#FF6666';
+                        sparkColor = '#FF9900';
+                    } else if (bomb.size === "medium") {
+                        bombColor = '#FF9900'; // 橙色
+                        innerColor = '#FFCC66';
+                        sparkColor = '#FF6600';
+                    } else {
+                        bombColor = '#FFFF00'; // 黃色
+                        innerColor = '#FFFF99';
+                        sparkColor = '#FFCC00';
+                    }
+                } else {
+                    // 一般和困難模式保持原有顏色
+                    bombColor = '#FF9900'; // 橙色
+                    innerColor = '#FFCC66';
+                    sparkColor = '#FF4500';
+                }
+                
+                // 繪製炸彈外圓
+                ctx.fillStyle = bombColor;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, bomb.width/2, bomb.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 繪製炸彈內圓
+                ctx.fillStyle = innerColor;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, bomb.width/3, bomb.height/3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 繪製炸彈引信 - 根據大小調整
+                const fuseHeight = bomb.width * 0.25; // 引信高度為寬度的25%
+                ctx.fillStyle = '#8B4513'; // 棕色
+                ctx.fillRect(-bomb.width/20, -bomb.height/2 - fuseHeight, bomb.width/10, fuseHeight);
+                
+                // 繪製炸彈火花 - 根據大小調整
+                ctx.fillStyle = sparkColor;
+                ctx.beginPath();
+                ctx.ellipse(0, -bomb.height/2 - fuseHeight, bomb.width/10, bomb.width/8, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 繪製危險符號 - 根據大小調整字體
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold ' + (bomb.width/6) + 'px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('!', 0, 0);
+                
+                // 如果是隨機模式，在炸彈上顯示大小標識
+                if (currentDifficulty.name === "隨機") {
+                    ctx.fillStyle = '#000000';
+                    ctx.font = 'bold ' + (bomb.width/10) + 'px Arial';
+                    let sizeText;
+                    if (bomb.width === 20) sizeText = "1x";
+                    else if (bomb.width === 30) sizeText = "1.5x";
+                    else sizeText = "2x";
+                    ctx.fillText(sizeText, 0, bomb.height/3);
+                }
+                
+                ctx.restore();
+                
+                // 繪製炸彈閃爍效果 - 根據模式調整閃爍頻率
+                const flashSpeed = currentDifficulty.name === "隨機" ? 150 : 200; // 隨機模式閃爍更快
+                if (Math.sin(Date.now() / flashSpeed) > 0) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(bomb.x, bomb.y, bomb.width/2 + 5, bomb.height/2 + 5, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+        }
+
         // 繪製遊戲背景
         function drawBackground() {
             // 繪製漸層背景
@@ -2493,9 +2842,18 @@
                 spawnBird();
                 updateBirds();
                 
+                // 生成和更新炸彈（只有一般、困難和隨機模式才有）
+                if (currentDifficulty.hasBombs) {
+                    spawnBomb();
+                    updateBombs();
+                }
+                
                 // 繪製遊戲
                 drawBackground();
                 drawBirds();
+                if (currentDifficulty.hasBombs) {
+                    drawBombs();
+                }
             }
             
             requestAnimationFrame(gameLoop);
