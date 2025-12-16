@@ -1299,6 +1299,171 @@
             transform: scale(1.05);
             box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
         }
+        
+        /* ========== 生存射擊遊戲樣式 ========== */
+        .survival-game-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .survival-game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .survival-game-canvas {
+            display: block;
+            background-color: #2a2a2a;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .survival-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+        
+        .survival-title {
+            color: #fff;
+            font-size: 48px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .survival-grid-container {
+            display: grid;
+            gap: 30px;
+        }
+        
+        .survival-grid-item {
+            width: 200px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .survival-grid-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #4CAF50;
+        }
+        
+        .survival-grid-item.exit {
+            background: linear-gradient(135deg, #f44336, #c62828);
+        }
+        
+        .survival-grid-item.exit:hover {
+            box-shadow: 0 0 20px #f44336;
+        }
+        
+        .survival-grid-item.resume {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+        }
+        
+        .survival-grid-item.resume:hover {
+            box-shadow: 0 0 20px #2196F3;
+        }
+        
+        .survival-hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 20px;
+            z-index: 5;
+        }
+        
+        #survivalHealthBar {
+            width: 200px;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        #survivalHealthFill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #f44336, #4CAF50);
+            transition: width 0.3s;
+        }
+        
+        #survivalAmmo {
+            margin-top: 10px;
+        }
+        
+        #survivalGameOver {
+            display: none;
+            text-align: center;
+        }
+        
+        #survivalScore {
+            font-size: 36px;
+            color: #4CAF50;
+            margin: 20px 0;
+        }
+        
+        #survivalPauseScreen {
+            display: none;
+        }
+        
+        .survival-pause-title {
+            color: #fff;
+            font-size: 60px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 15px #2196F3;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        #survivalReloadIndicator {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            color: #FF9800;
+            font-size: 16px;
+            display: none;
+        }
+        
+        #survivalPauseHint {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -1383,8 +1548,6 @@
             <div class="title-container">
                 <h1 class="title">永恆領域遊戲</h1>
             </div>
-            
-            <!-- 已刪除「點擊開始，挑戰你的反應速度！」文字 -->
             
             <div id="startButton" class="button">開始遊戲</div>
             <p class="instructions">按空格鍵或點擊開始按鈕開始遊戲</p>
@@ -1477,6 +1640,63 @@
                 <div id="applyBackgroundButton" style="margin-top: 15px; width: 200px; display: none;">套用背景</div>
             </div>
         </div>
+        
+        <!-- ========== 生存射擊遊戲畫面 ========== -->
+        <div id="survivalGameScreen" class="survival-game-screen hidden">
+            <div class="survival-game-container">
+                <!-- 主畫面 -->
+                <div id="survivalMainScreen" class="survival-screen">
+                    <h1 class="survival-title">生存射擊遊戲</h1>
+                    <div class="survival-grid-container">
+                        <div id="survivalStartBtn" class="survival-grid-item">開始遊戲</div>
+                    </div>
+                </div>
+                
+                <!-- 選擇畫面 -->
+                <div id="survivalModeScreen" class="survival-screen hidden">
+                    <h1 class="survival-title">選擇模式</h1>
+                    <div class="survival-grid-container">
+                        <div id="survivalGameStartBtn" class="survival-grid-item">開始遊戲</div>
+                        <div id="survivalExitBtn" class="survival-grid-item exit">退出</div>
+                    </div>
+                </div>
+                
+                <!-- 遊戲畫面 -->
+                <canvas id="survivalGameCanvas" class="survival-game-canvas"></canvas>
+                
+                <!-- HUD -->
+                <div id="survivalHud" class="survival-hud">
+                    <div id="survivalHealthBar">
+                        <div id="survivalHealthFill"></div>
+                    </div>
+                    <div>分數: <span id="survivalScoreDisplay">0</span></div>
+                    <div id="survivalAmmo">子彈: <span id="survivalAmmoCount">30</span>/30</div>
+                </div>
+                
+                <!-- 裝填指示器 -->
+                <div id="survivalReloadIndicator">裝填中...</div>
+                
+                <!-- 暫停畫面 -->
+                <div id="survivalPauseScreen" class="survival-screen">
+                    <h1 class="survival-pause-title">遊戲暫停</h1>
+                    <div class="survival-grid-container">
+                        <div id="survivalResumeBtn" class="survival-grid-item resume">繼續遊戲</div>
+                        <div id="survivalPauseExitBtn" class="survival-grid-item exit">退出遊戲</div>
+                    </div>
+                    <div id="survivalPauseHint">按 ESC 繼續遊戲</div>
+                </div>
+                
+                <!-- 遊戲結束畫面 -->
+                <div id="survivalGameOver" class="survival-screen">
+                    <h1 class="survival-title">遊戲結束</h1>
+                    <div id="survivalScore">分數: 0</div>
+                    <div class="survival-grid-container">
+                        <div id="survivalRestartBtn" class="survival-grid-item">重新開始</div>
+                        <div id="survivalMainMenuBtn" class="survival-grid-item exit">主選單</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1487,7 +1707,9 @@
             DIFFICULTY_SELECT: 2,
             PLAYING: 3,
             PAUSED: 4,
-            GAME_OVER: 5
+            GAME_OVER: 5,
+            SURVIVAL_GAME: 6,
+            SURVIVAL_MODE_SELECT: 7
         };
 
         // 難度設定 - 修改隨機模式的設定
@@ -1566,13 +1788,15 @@
         let gameTimer = null;
         let isRandomMode = false;
 
-        // 游戏数据
+        // 游戏数据 - 新增survive游戏
         const games = {
             'all': [
-                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' }
+                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' },
+                { id: 'survive', name: '生存射擊遊戲', category: 'shooting' }
             ],
             'shooting': [
-                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' }
+                { id: 'birdShooting', name: '飛鳥射擊遊戲', category: 'shooting' },
+                { id: 'survive', name: '生存射擊遊戲', category: 'shooting' }
             ],
             'driving': [],
             'card': [],
@@ -1748,11 +1972,45 @@
             }
         };
 
+        // ========== 生存射擊遊戲變數 ==========
+        const survivalGameState = {
+            currentScreen: 'main',
+            isPaused: false,
+            player: {
+                x: 400,
+                y: 300,
+                size: 20,
+                health: 100,
+                maxHealth: 100,
+                speed: 5,
+                angle: 0
+            },
+            bullets: [],
+            enemies: [],
+            score: 0,
+            lastShot: 0,
+            shotDelay: 200,
+            ammo: 30,
+            maxAmmo: 30,
+            reloading: false,
+            keys: {},
+            mouse: { x: 0, y: 0 },
+            lastEnemySpawn: 0,
+            enemySpawnDelay: 1000,
+            gameLoopId: null
+        };
+
+        // 生存射擊遊戲元素
+        let survivalCanvas, survivalCtx;
+
         // 初始化遊戲
         function init() {
             gameCanvas = document.getElementById('gameCanvas');
             ctx = gameCanvas.getContext('2d');
             crosshair = document.getElementById('crosshair');
+            
+            // 初始化生存射擊遊戲
+            initSurvivalGame();
             
             // 從localStorage加載歷史記錄
             loadHistory();
@@ -1774,6 +2032,557 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // 初始化生存射擊遊戲
+        function initSurvivalGame() {
+            survivalCanvas = document.getElementById('survivalGameCanvas');
+            survivalCtx = survivalCanvas.getContext('2d');
+            
+            // 設置畫布大小
+            resizeSurvivalCanvas();
+            window.addEventListener('resize', resizeSurvivalCanvas);
+            
+            // 設置事件監聽器
+            setupSurvivalEventListeners();
+        }
+
+        // 調整生存射擊遊戲畫布大小
+        function resizeSurvivalCanvas() {
+            survivalCanvas.width = window.innerWidth;
+            survivalCanvas.height = window.innerHeight;
+            if (survivalGameState.currentScreen === 'game' && survivalGameState.player) {
+                survivalGameState.player.x = Math.min(survivalGameState.player.x, survivalCanvas.width - survivalGameState.player.size);
+                survivalGameState.player.y = Math.min(survivalGameState.player.y, survivalCanvas.height - survivalGameState.player.size);
+            }
+        }
+
+        // 設置生存射擊遊戲事件監聽器
+        function setupSurvivalEventListeners() {
+            // 屏幕切換
+            document.getElementById('survivalStartBtn').addEventListener('click', () => {
+                document.getElementById('survivalMainScreen').classList.add('hidden');
+                document.getElementById('survivalModeScreen').classList.remove('hidden');
+                survivalGameState.currentScreen = 'mode';
+            });
+
+            document.getElementById('survivalExitBtn').addEventListener('click', () => {
+                // 返回主遊戲選擇界面
+                hideSurvivalGame();
+                showGameSelectionScreen();
+            });
+
+            document.getElementById('survivalGameStartBtn').addEventListener('click', startSurvivalGame);
+            document.getElementById('survivalRestartBtn').addEventListener('click', startSurvivalGame);
+            document.getElementById('survivalMainMenuBtn').addEventListener('click', () => {
+                document.getElementById('survivalGameOver').style.display = 'none';
+                hideSurvivalGame();
+                showMainScreen();
+            });
+
+            // 暫停畫面控制
+            document.getElementById('survivalResumeBtn').addEventListener('click', toggleSurvivalPause);
+            document.getElementById('survivalPauseExitBtn').addEventListener('click', () => {
+                toggleSurvivalPause();
+                document.getElementById('survivalGameOver').style.display = 'none';
+                hideSurvivalGame();
+                showMainScreen();
+            });
+
+            // ESC鍵監聽
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && survivalGameState.currentScreen === 'game') {
+                    toggleSurvivalPause();
+                }
+            });
+
+            // 輸入處理
+            survivalCanvas.addEventListener('mousemove', (e) => {
+                const rect = survivalCanvas.getBoundingClientRect();
+                survivalGameState.mouse.x = e.clientX - rect.left;
+                survivalGameState.mouse.y = e.clientY - rect.top;
+            });
+
+            survivalCanvas.addEventListener('mousedown', (e) => {
+                if (survivalGameState.currentScreen === 'game' && !survivalGameState.reloading && !survivalGameState.isPaused) {
+                    shootSurvival();
+                }
+            });
+
+            // 鍵盤控制
+            document.addEventListener('keydown', (e) => {
+                if (currentState === GameState.SURVIVAL_GAME) {
+                    survivalGameState.keys[e.key.toLowerCase()] = true;
+                    
+                    if (e.key === 'r' && survivalGameState.currentScreen === 'game' && !survivalGameState.isPaused) {
+                        reloadSurvival();
+                    }
+                    
+                    if (e.key === ' ' && survivalGameState.currentScreen === 'game' && !survivalGameState.isPaused) {
+                        shootSurvival();
+                    }
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                if (currentState === GameState.SURVIVAL_GAME) {
+                    survivalGameState.keys[e.key.toLowerCase()] = false;
+                }
+            });
+        }
+
+        // 顯示生存射擊遊戲
+        function showSurvivalGame() {
+            // 隱藏所有其他畫面
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('gameSelectionScreen').classList.add('hidden');
+            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('historyPopup').style.display = 'none';
+            document.getElementById('fileExplorerModal').style.display = 'none';
+            
+            // 顯示生存射擊遊戲
+            document.getElementById('survivalGameScreen').classList.remove('hidden');
+            document.getElementById('survivalMainScreen').classList.remove('hidden');
+            document.getElementById('survivalModeScreen').classList.add('hidden');
+            document.getElementById('survivalGameOver').style.display = 'none';
+            document.getElementById('survivalPauseScreen').style.display = 'none';
+            
+            currentState = GameState.SURVIVAL_GAME;
+            survivalGameState.currentScreen = 'main';
+            
+            // 重置遊戲狀態
+            survivalGameState.player = {
+                x: survivalCanvas.width / 2,
+                y: survivalCanvas.height / 2,
+                size: 20,
+                health: 100,
+                maxHealth: 100,
+                speed: 5,
+                angle: 0
+            };
+            survivalGameState.bullets = [];
+            survivalGameState.enemies = [];
+            survivalGameState.score = 0;
+            survivalGameState.ammo = 30;
+            survivalGameState.reloading = false;
+            survivalGameState.lastEnemySpawn = Date.now();
+            
+            updateSurvivalHUD();
+        }
+
+        // 隱藏生存射擊遊戲
+        function hideSurvivalGame() {
+            document.getElementById('survivalGameScreen').classList.add('hidden');
+            // 停止遊戲循環
+            if (survivalGameState.gameLoopId) {
+                cancelAnimationFrame(survivalGameState.gameLoopId);
+                survivalGameState.gameLoopId = null;
+            }
+        }
+
+        // 開始生存射擊遊戲
+        function startSurvivalGame() {
+            document.getElementById('survivalModeScreen').classList.add('hidden');
+            document.getElementById('survivalGameOver').style.display = 'none';
+            document.getElementById('survivalPauseScreen').style.display = 'none';
+            survivalGameState.currentScreen = 'game';
+            survivalGameState.isPaused = false;
+            
+            // 重置遊戲狀態
+            survivalGameState.player = {
+                x: survivalCanvas.width / 2,
+                y: survivalCanvas.height / 2,
+                size: 20,
+                health: 100,
+                maxHealth: 100,
+                speed: 5,
+                angle: 0
+            };
+            survivalGameState.bullets = [];
+            survivalGameState.enemies = [];
+            survivalGameState.score = 0;
+            survivalGameState.ammo = 30;
+            survivalGameState.reloading = false;
+            survivalGameState.lastEnemySpawn = Date.now();
+            
+            updateSurvivalHUD();
+            
+            // 開始遊戲循環
+            survivalGameLoop();
+        }
+
+        // 更新生存射擊遊戲HUD
+        function updateSurvivalHUD() {
+            document.getElementById('survivalScoreDisplay').textContent = survivalGameState.score;
+            document.getElementById('survivalAmmoCount').textContent = survivalGameState.ammo;
+            const healthPercent = (survivalGameState.player.health / survivalGameState.player.maxHealth) * 100;
+            document.getElementById('survivalHealthFill').style.width = healthPercent + '%';
+            
+            // 更新裝填指示器
+            if (survivalGameState.reloading) {
+                document.getElementById('survivalReloadIndicator').style.display = 'block';
+            } else {
+                document.getElementById('survivalReloadIndicator').style.display = 'none';
+            }
+        }
+
+        // 敵人生成
+        function spawnSurvivalEnemy() {
+            if (survivalGameState.currentScreen !== 'game' || survivalGameState.isPaused) return;
+            
+            const now = Date.now();
+            if (now - survivalGameState.lastEnemySpawn < survivalGameState.enemySpawnDelay) return;
+            
+            survivalGameState.lastEnemySpawn = now;
+            
+            // 隨機選擇生成位置（從四個邊緣之一）
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            
+            switch(side) {
+                case 0: // 上邊
+                    x = Math.random() * survivalCanvas.width;
+                    y = -50;
+                    break;
+                case 1: // 右邊
+                    x = survivalCanvas.width + 50;
+                    y = Math.random() * survivalCanvas.height;
+                    break;
+                case 2: // 下邊
+                    x = Math.random() * survivalCanvas.width;
+                    y = survivalCanvas.height + 50;
+                    break;
+                case 3: // 左邊
+                    x = -50;
+                    y = Math.random() * survivalCanvas.height;
+                    break;
+            }
+            
+            const enemy = {
+                x: x,
+                y: y,
+                size: 15 + Math.random() * 10,
+                speed: 1 + Math.random() * 2 + (survivalGameState.score * 0.01),
+                health: 20,
+                color: `hsl(${Math.random() * 60}, 100%, 50%)`
+            };
+            
+            survivalGameState.enemies.push(enemy);
+            
+            // 根據分數調整生成速度
+            survivalGameState.enemySpawnDelay = Math.max(300, 1000 - survivalGameState.score * 5);
+        }
+
+        // 射擊
+        function shootSurvival() {
+            if (survivalGameState.isPaused) return;
+            
+            const now = Date.now();
+            if (now - survivalGameState.lastShot < survivalGameState.shotDelay) return;
+            if (survivalGameState.ammo <= 0) {
+                reloadSurvival();
+                return;
+            }
+            
+            survivalGameState.lastShot = now;
+            survivalGameState.ammo--;
+            
+            // 計算射擊角度
+            const angle = Math.atan2(
+                survivalGameState.mouse.y - survivalGameState.player.y,
+                survivalGameState.mouse.x - survivalGameState.player.x
+            );
+            
+            // 創建子彈
+            survivalGameState.bullets.push({
+                x: survivalGameState.player.x,
+                y: survivalGameState.player.y,
+                dx: Math.cos(angle) * 10,
+                dy: Math.sin(angle) * 10,
+                size: 5,
+                life: 100
+            });
+            
+            updateSurvivalHUD();
+        }
+
+        // 裝填彈藥
+        function reloadSurvival() {
+            if (survivalGameState.isPaused) return;
+            if (survivalGameState.reloading || survivalGameState.ammo === survivalGameState.maxAmmo) return;
+            
+            survivalGameState.reloading = true;
+            updateSurvivalHUD();
+            
+            setTimeout(() => {
+                if (!survivalGameState.isPaused) {
+                    survivalGameState.ammo = survivalGameState.maxAmmo;
+                    survivalGameState.reloading = false;
+                    updateSurvivalHUD();
+                }
+            }, 1000);
+        }
+
+        // 暫停/繼續遊戲
+        function toggleSurvivalPause() {
+            if (survivalGameState.currentScreen !== 'game') return;
+            
+            survivalGameState.isPaused = !survivalGameState.isPaused;
+            
+            if (survivalGameState.isPaused) {
+                document.getElementById('survivalPauseScreen').style.display = 'flex';
+                cancelAnimationFrame(survivalGameState.gameLoopId);
+            } else {
+                document.getElementById('survivalPauseScreen').style.display = 'none';
+                survivalGameLoop();
+            }
+        }
+
+        // 生存射擊遊戲循環
+        function survivalGameLoop() {
+            if (survivalGameState.currentScreen !== 'game' || survivalGameState.isPaused) return;
+            
+            updateSurvival();
+            drawSurvival();
+            
+            survivalGameState.gameLoopId = requestAnimationFrame(survivalGameLoop);
+        }
+
+        // 更新生存射擊遊戲邏輯
+        function updateSurvival() {
+            if (survivalGameState.isPaused) return;
+            
+            // 玩家移動
+            if (survivalGameState.keys['w'] || survivalGameState.keys['arrowup']) {
+                survivalGameState.player.y -= survivalGameState.player.speed;
+            }
+            if (survivalGameState.keys['s'] || survivalGameState.keys['arrowdown']) {
+                survivalGameState.player.y += survivalGameState.player.speed;
+            }
+            if (survivalGameState.keys['a'] || survivalGameState.keys['arrowleft']) {
+                survivalGameState.player.x -= survivalGameState.player.speed;
+            }
+            if (survivalGameState.keys['d'] || survivalGameState.keys['arrowright']) {
+                survivalGameState.player.x += survivalGameState.player.speed;
+            }
+            
+            // 邊界檢查
+            survivalGameState.player.x = Math.max(survivalGameState.player.size, 
+                Math.min(survivalCanvas.width - survivalGameState.player.size, survivalGameState.player.x));
+            survivalGameState.player.y = Math.max(survivalGameState.player.size, 
+                Math.min(survivalCanvas.height - survivalGameState.player.size, survivalGameState.player.y));
+            
+            // 更新玩家角度
+            survivalGameState.player.angle = Math.atan2(
+                survivalGameState.mouse.y - survivalGameState.player.y,
+                survivalGameState.mouse.x - survivalGameState.player.x
+            );
+            
+            // 生成敵人
+            spawnSurvivalEnemy();
+            
+            // 更新子彈
+            for (let i = survivalGameState.bullets.length - 1; i >= 0; i--) {
+                const bullet = survivalGameState.bullets[i];
+                bullet.x += bullet.dx;
+                bullet.y += bullet.dy;
+                bullet.life--;
+                
+                // 邊界檢查
+                if (bullet.x < 0 || bullet.x > survivalCanvas.width || 
+                    bullet.y < 0 || bullet.y > survivalCanvas.height ||
+                    bullet.life <= 0) {
+                    survivalGameState.bullets.splice(i, 1);
+                    continue;
+                }
+                
+                // 檢查是否擊中敵人
+                for (let j = survivalGameState.enemies.length - 1; j >= 0; j--) {
+                    const enemy = survivalGameState.enemies[j];
+                    const dx = bullet.x - enemy.x;
+                    const dy = bullet.y - enemy.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < enemy.size) {
+                        enemy.health -= 10;
+                        survivalGameState.bullets.splice(i, 1);
+                        
+                        if (enemy.health <= 0) {
+                            survivalGameState.score += Math.floor(enemy.size * 2);
+                            survivalGameState.enemies.splice(j, 1);
+                        }
+                        updateSurvivalHUD();
+                        break;
+                    }
+                }
+            }
+            
+            // 更新敵人
+            for (let i = survivalGameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = survivalGameState.enemies[i];
+                
+                // 移動向玩家
+                const dx = survivalGameState.player.x - enemy.x;
+                const dy = survivalGameState.player.y - enemy.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                enemy.x += (dx / distance) * enemy.speed;
+                enemy.y += (dy / distance) * enemy.speed;
+                
+                // 檢查是否碰到玩家
+                if (distance < enemy.size + survivalGameState.player.size) {
+                    survivalGameState.player.health -= 2;
+                    survivalGameState.enemies.splice(i, 1);
+                    updateSurvivalHUD();
+                    
+                    if (survivalGameState.player.health <= 0) {
+                        survivalGameOver();
+                    }
+                }
+            }
+        }
+
+        // 繪製生存射擊遊戲
+        function drawSurvival() {
+            // 清空畫布
+            survivalCtx.fillStyle = '#2a2a2a';
+            survivalCtx.fillRect(0, 0, survivalCanvas.width, survivalCanvas.height);
+            
+            // 繪製背景網格
+            drawSurvivalGrid();
+            
+            // 繪製子彈
+            survivalCtx.fillStyle = '#FFD700';
+            survivalGameState.bullets.forEach(bullet => {
+                survivalCtx.beginPath();
+                survivalCtx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
+                survivalCtx.fill();
+            });
+            
+            // 繪製敵人
+            survivalGameState.enemies.forEach(enemy => {
+                survivalCtx.fillStyle = enemy.color;
+                survivalCtx.beginPath();
+                survivalCtx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+                survivalCtx.fill();
+                
+                // 敵人生命值條
+                survivalCtx.fillStyle = '#f44336';
+                survivalCtx.fillRect(enemy.x - enemy.size, enemy.y - enemy.size - 10, 
+                            enemy.size * 2, 5);
+                survivalCtx.fillStyle = '#4CAF50';
+                survivalCtx.fillRect(enemy.x - enemy.size, enemy.y - enemy.size - 10, 
+                            (enemy.health / 20) * enemy.size * 2, 5);
+            });
+            
+            // 繪製玩家
+            drawSurvivalPlayer();
+            
+            // 繪製準星
+            drawSurvivalCrosshair();
+        }
+
+        // 繪製網格背景
+        function drawSurvivalGrid() {
+            survivalCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            survivalCtx.lineWidth = 1;
+            
+            const gridSize = 50;
+            
+            // 垂直線
+            for (let x = 0; x < survivalCanvas.width; x += gridSize) {
+                survivalCtx.beginPath();
+                survivalCtx.moveTo(x, 0);
+                survivalCtx.lineTo(x, survivalCanvas.height);
+                survivalCtx.stroke();
+            }
+            
+            // 水平線
+            for (let y = 0; y < survivalCanvas.height; y += gridSize) {
+                survivalCtx.beginPath();
+                survivalCtx.moveTo(0, y);
+                survivalCtx.lineTo(survivalCanvas.width, y);
+                survivalCtx.stroke();
+            }
+        }
+
+        // 繪製玩家
+        function drawSurvivalPlayer() {
+            // 玩家身體
+            survivalCtx.fillStyle = '#4CAF50';
+            survivalCtx.beginPath();
+            survivalCtx.arc(survivalGameState.player.x, survivalGameState.player.y, 
+                   survivalGameState.player.size, 0, Math.PI * 2);
+            survivalCtx.fill();
+            
+            // 玩家武器（指向滑鼠）
+            survivalCtx.strokeStyle = '#795548';
+            survivalCtx.lineWidth = 8;
+            survivalCtx.beginPath();
+            survivalCtx.moveTo(survivalGameState.player.x, survivalGameState.player.y);
+            survivalCtx.lineTo(
+                survivalGameState.player.x + Math.cos(survivalGameState.player.angle) * 30,
+                survivalGameState.player.y + Math.sin(survivalGameState.player.angle) * 30
+            );
+            survivalCtx.stroke();
+            
+            // 玩家生命值條
+            survivalCtx.fillStyle = '#f44336';
+            survivalCtx.fillRect(survivalGameState.player.x - survivalGameState.player.size, 
+                        survivalGameState.player.y - survivalGameState.player.size - 15, 
+                        survivalGameState.player.size * 2, 8);
+            survivalCtx.fillStyle = '#4CAF50';
+            const healthPercent = survivalGameState.player.health / survivalGameState.player.maxHealth;
+            survivalCtx.fillRect(survivalGameState.player.x - survivalGameState.player.size, 
+                        survivalGameState.player.y - survivalGameState.player.size - 15, 
+                        healthPercent * survivalGameState.player.size * 2, 8);
+        }
+
+        // 繪製準星
+        function drawSurvivalCrosshair() {
+            const size = 15;
+            const thickness = 2;
+            
+            survivalCtx.strokeStyle = survivalGameState.reloading ? '#FF9800' : '#00FF00';
+            survivalCtx.lineWidth = thickness;
+            
+            // 水平線
+            survivalCtx.beginPath();
+            survivalCtx.moveTo(survivalGameState.mouse.x - size, survivalGameState.mouse.y);
+            survivalCtx.lineTo(survivalGameState.mouse.x + size, survivalGameState.mouse.y);
+            survivalCtx.stroke();
+            
+            // 垂直線
+            survivalCtx.beginPath();
+            survivalCtx.moveTo(survivalGameState.mouse.x, survivalGameState.mouse.y - size);
+            survivalCtx.lineTo(survivalGameState.mouse.x, survivalGameState.mouse.y + size);
+            survivalCtx.stroke();
+            
+            // 中心點
+            survivalCtx.fillStyle = survivalGameState.reloading ? '#FF9800' : '#FF0000';
+            survivalCtx.beginPath();
+            survivalCtx.arc(survivalGameState.mouse.x, survivalGameState.mouse.y, 2, 0, Math.PI * 2);
+            survivalCtx.fill();
+            
+            // 如果是裝填中，顯示裝填動畫
+            if (survivalGameState.reloading) {
+                survivalCtx.beginPath();
+                survivalCtx.arc(survivalGameState.mouse.x, survivalGameState.mouse.y, size + 5, 0, Math.PI * 2);
+                survivalCtx.strokeStyle = '#FF9800';
+                survivalCtx.lineWidth = 3;
+                survivalCtx.stroke();
+            }
+        }
+
+        // 生存射擊遊戲結束
+        function survivalGameOver() {
+            survivalGameState.currentScreen = 'gameOver';
+            cancelAnimationFrame(survivalGameState.gameLoopId);
+            document.getElementById('survivalScore').textContent = `分數: ${survivalGameState.score}`;
+            document.getElementById('survivalGameOver').style.display = 'flex';
+        }
+
+        // ========== 原有遊戲程式 ==========
+        
         // 創建科技感光點
         function createTechDots() {
             const techDots = document.getElementById('techDots');
@@ -1886,6 +2695,7 @@
             document.getElementById('gameOverMessage').style.display = 'none';
             hideHistory(); // 確保歷史記錄彈窗關閉
             hideFileExplorer(); // 確保檔案總管關閉
+            hideSurvivalGame(); // 確保生存射擊遊戲關閉
             
             // 初始化內容顯示
             updateContentDisplay('all');
@@ -2002,6 +2812,9 @@
                             if (game.id === 'birdShooting') {
                                 currentGameId = game.id;
                                 showDifficultyScreen();
+                            } else if (game.id === 'survive') {
+                                // 顯示生存射擊遊戲
+                                showSurvivalGame();
                             }
                         });
                         contentDisplay.appendChild(gameItem);
@@ -2262,6 +3075,7 @@
             document.getElementById('gameOverMessage').style.display = 'none';
             hideHistory(); // 確保歷史記錄彈窗關閉
             hideFileExplorer(); // 確保檔案總管關閉
+            hideSurvivalGame(); // 確保生存射擊遊戲關閉
             currentState = GameState.DIFFICULTY_SELECT;
         }
 
@@ -2273,6 +3087,7 @@
             document.getElementById('mainScreen').classList.remove('hidden');
             hideHistory(); // 確保歷史記錄彈窗關閉
             hideFileExplorer(); // 確保檔案總管關閉
+            hideSurvivalGame(); // 確保生存射擊遊戲關閉
             currentState = GameState.MAIN_MENU;
         }
 
