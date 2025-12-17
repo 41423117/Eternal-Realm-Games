@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>永恒领域游戏</title>
+    <title>永恒領域遊戲</title>
     <style>
         * {
             margin: 0;
@@ -1692,7 +1692,8 @@
                     <div id="survivalScore">分數: 0</div>
                     <div class="survival-grid-container">
                         <div id="survivalRestartBtn" class="survival-grid-item">重新開始</div>
-                        <div id="survivalMainMenuBtn" class="survival-grid-item exit">主選單</div>
+                        <!-- 將「主選單」改為「返回」 -->
+                        <div id="survivalMainMenuBtn" class="survival-grid-item exit">返回</div>
                     </div>
                 </div>
             </div>
@@ -2072,19 +2073,37 @@
 
             document.getElementById('survivalGameStartBtn').addEventListener('click', startSurvivalGame);
             document.getElementById('survivalRestartBtn').addEventListener('click', startSurvivalGame);
+            // 修改：將「主選單」按鈕改為「返回」並返回選擇模式畫面
             document.getElementById('survivalMainMenuBtn').addEventListener('click', () => {
+                // 返回選擇模式畫面
                 document.getElementById('survivalGameOver').style.display = 'none';
-                hideSurvivalGame();
-                showMainScreen();
+                document.getElementById('survivalModeScreen').classList.remove('hidden');
+                survivalGameState.currentScreen = 'mode';
+                
+                // 停止遊戲循環
+                if (survivalGameState.gameLoopId) {
+                    cancelAnimationFrame(survivalGameState.gameLoopId);
+                    survivalGameState.gameLoopId = null;
+                }
             });
 
             // 暫停畫面控制
             document.getElementById('survivalResumeBtn').addEventListener('click', toggleSurvivalPause);
+            // 修改：暫停畫面的「退出遊戲」按鈕也返回選擇模式畫面
             document.getElementById('survivalPauseExitBtn').addEventListener('click', () => {
-                toggleSurvivalPause();
-                document.getElementById('survivalGameOver').style.display = 'none';
-                hideSurvivalGame();
-                showMainScreen();
+                // 取消暫停狀態
+                survivalGameState.isPaused = false;
+                // 隱藏暫停畫面
+                document.getElementById('survivalPauseScreen').style.display = 'none';
+                // 返回選擇模式畫面
+                document.getElementById('survivalModeScreen').classList.remove('hidden');
+                survivalGameState.currentScreen = 'mode';
+                
+                // 停止遊戲循環
+                if (survivalGameState.gameLoopId) {
+                    cancelAnimationFrame(survivalGameState.gameLoopId);
+                    survivalGameState.gameLoopId = null;
+                }
             });
 
             // ESC鍵監聽
