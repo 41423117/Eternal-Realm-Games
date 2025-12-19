@@ -89,12 +89,12 @@
   
 ### 當飛鳥從左邊飛出時，檢查 bird.x
 ```
-  bird.x > gameCanvas.width + birdWidth/2。
+bird.x > gameCanvas.width + birdWidth/2。
 ```
 ### 當飛鳥從左邊飛出時，檢查 bird.x
-  bird.x < -birdWidth/2。
 ```
-  飛鳥飛出畫面後會從陣列中移除，並增加 birdsEscaped 計數。
+bird.x < -birdWidth/2。
+飛鳥飛出畫面後會從陣列中移除，並增加 birdsEscaped 計數。
 ```
 
 ### 更新了剩餘飛鳥計算方式：
