@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="ie/170.jpeg" alt="描述這張圖片的內容" width="600">
+</p>
+
 ## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
 |   |   |
