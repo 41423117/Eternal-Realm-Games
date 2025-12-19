@@ -1,4 +1,4 @@
-## Click[here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
+## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
 ### 第 1 頁
 ![Page 1](folder/page07.png)
@@ -36,76 +36,63 @@
 
 # w1
 
-# w9_11/6_12:41成功運行
-  我在些關卡做出一個遊戲，這個遊戲的開始主畫面背景如2k圖片顯示，而開始的主畫面在橫的中間下方生成出一個開始的文字按鍵，
+# w9_11/6_12:41 Successfully launched
+I have created a game at this stage. The background of the game's main start screen is as shown in the 2k image, and a text button that says "Start" is generated in the lower middle section of the horizontal screen.
+
+When the spacebar is pressed or the mouse clicks the start button, the scene gradually transitions to another screen. The background of this screen is generated as per image 1753283162418.
+
+In the middle of this screen, five flat rectangular slots are generated from top to bottom. The text in the first slot from the top is "Simple," the text in the second slot is "Normal," the text in the fourth slot is "Random Difficulty," and the text in the fifth slot is "Exit."
+
+When the first slot is pressed, the game starts. Birds are generated one by one on either the far left or far right side of the top half of the screen. The generation time is random, between 1 to 2.5 seconds, and all birds fly toward the opposite side. When a bird touches its respective opposite side, it disappears. This level only generates 15 birds, and the speed of the birds at the start of the game is not too fast.
+
+When the second slot is pressed, the game starts. The number of birds generated and their movement speed are increased by 5 birds and 0.3 seconds faster, respectively, compared to the first slot.
+
+When the third slot is pressed, the game starts. The number of birds generated and their movement speed are increased by 10 birds and 0.5 seconds faster, respectively, compared to the second slot.
+
+When the fourth slot is pressed, the game starts. The number of birds generated and their movement speed vary randomly between the values of the first, second, and third slots.
+
+In these four levels of the game, my mouse cursor becomes a shooting circle. When the circle clicks on a bird, the bird is killed and disappears. The clickable range of my circle is 1.5 times its size. The level ends when all birds have completely disappeared.
+
+When the ESC key on the keyboard is pressed, the game pauses, and the screen with the five slots appears. Additionally, a new slot is generated below the fifth slot, with the text "Continue" inside it.
+
+When the "Continue" slot is pressed, the game returns to the paused screen and resumes the unfinished level until the game ends. If the "Exit" slot is pressed, the scene transitions back to the main start screen of the game.
+
+To enter the game again, simply press the "Start" button once more.
+
+When a level is completed, the five slots reappear. If "Exit" is pressed at this point, the scene transitions back to the main start screen of the game. To enter the game again, simply press the "Start" button once more.
 
   
-  當按下空白鍵或滑鼠點案開始後，場景便漸漸轉換到另一個畫面，而這畫面背景如1753283162418圖生成，
+# w10_11/13_00:19 New feature added: After completing each level, the game now returns to the difficulty selection screen. Additionally, I have improved the issue where the remaining bird count did not update when birds flew to the end.
 
+## Key Update Notes
+
+
+### Added an escaped bird counter:
+
+Added a birdsEscaped variable to track the number of birds that have flown off the screen.
+
+Improved the bird disappearance logic.
+
+In the updateBirds() function, a check is now performed to determine whether a bird has completely flown off the screen.
   
-  而畫面中間生成由上到下5個扁長的長方格子，由上往下的第一個格子內的文字為簡單，第二個格子內的文字為一般，第四個格子內的文字為隨機難度，第五個格子內的文字為退出，
-
-  
-  當按下第一個格子便開始遊戲，畫面的一半上面最左邊或右邊一隻一隻的飛鳥生成，生成時間為1~2.5秒內隨機時間生成，且飛鳥都要往對邊線飛，當飛鳥處碰到各自的對邊便消失，這關只生成15隻，而開始遊戲的飛鳥速度不會太快，
-
-  
-  當按下第二格格子便開始遊戲，而開始遊戲的飛鳥數量和移動速度比第一個格子的多5隻和移動快0.3秒，
-
-  
-  當按下第三格格子便開始遊戲，而開始遊戲的飛鳥數量和速度比第二個格子的多10隻和移動快0.5秒，
-
-  
-  當按下第四格格子便開始遊戲，而開始遊戲的飛鳥數量和速度就由第一個格子到第三個格子的飛鳥數量和速度隨機變化，
-
-  
-  在這四關遊戲內我的滑鼠變成射擊圓圈，當圓圈點到飛鳥便殺死飛鳥，殺死的捻也就消失了，而我圓圈點按的範圍為我的圓圈1.5被大，當所有飛鳥都完全消失後便結束這關。
-
-  
-  當按下鍵盤ESC鍵便遊戲暫停，且跳出那五個格子的畫面，並且在第五個格子下方再生成一個格子，這新的格子內的文字為繼續，
-
-  
-  當按下繼續的格子便跳回剛剛的遊戲停止的畫面繼續執行未完成的遊戲直到遊戲結束，若按的是退出的格子，場景就轉變成這個遊戲的開始主畫面，
-
-  
-  當想進入遊戲就再按一次開始就可以了，
-
-  
-  當遊玩完某關關卡時便跳出那五個格子，且按下退出時，一樣場景就轉變成這個遊戲的開始主畫面，當想進入遊戲就在再按一次開始就可以了。
-
-  
-# w10_11/13_00:19 新增加了每關結束後，都能回到選擇度畫面。且外，我還改善了飛鳥飛到底，剩餘鳥的數量沒改善的缺點:
-
-
-## 主要修改說明
-
-
-### 新增了飛鳥逃脫計數器：
-
-  添加了 birdsEscaped 變數來記錄飛出畫面的飛鳥數量。
-
-  改進了飛鳥消失邏輯。
-
-  在 updateBirds() 函數中，現在會檢查飛鳥是否完全飛出畫面。
-  
-### 當飛鳥從左邊飛出時，檢查 bird.x
+### When a bird flies out from the left side, check bird.x.
 ```
 bird.x > gameCanvas.width + birdWidth/2。
 ```
-### 當飛鳥從左邊飛出時，檢查 bird.x
+### When a bird flies out from the right side, check bird.x.
 ```
 bird.x < -birdWidth/2。
 ```
 
-飛鳥飛出畫面後會從陣列中移除，並增加 birdsEscaped 計數。
+Birds that fly off the screen will be removed from the array, and the birdsEscaped count will be incremented.
 
-### 更新了剩餘飛鳥計算方式：
+### The method for calculating remaining birds has been updated:
 
-  修改了 updateBirdsLeft() 函數，現在計算方式為：
+The [updateBirdsLeft()] function has been modified. The calculation is now as follows:
 
-  剩餘飛鳥 = 總飛鳥數 - 已擊殺飛鳥 - 已逃脫飛鳥。
+Remaining birds = Total birds - Birds killed - Birds escaped.
 
-  這樣可以準確反映還需要處理的飛鳥數量。
-
+This accurately reflects the number of birds that still need to be dealt with.
 
 ### 改進了飛鳥生成邏輯：
 
