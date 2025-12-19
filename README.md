@@ -2,7 +2,17 @@
 
 |   |
 |---|
-| [<img src="folder/page07.png" alt="page07 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |   |
+| [<img src="folder/page07.png" alt="page07 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page08 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page04 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page05 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page06 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page09 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page10 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page11 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page12 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page13 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |
+| [<img src="folder/page07.png" alt="page14 icon" height="250"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |   |
 
 ### Page 1
 
