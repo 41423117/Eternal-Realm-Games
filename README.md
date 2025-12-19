@@ -1,36 +1,37 @@
 ## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
-### 第 1 頁
+### Page 1
+
 ![Page 1](folder/page07.png)
 
-### 第 2 頁  
+### Page 2  
 ![Page 2](folder/page08.png)
 
-### 第 3 頁
+### Page 3
 ![Page 3](folder/page04.png)
 
-### 第 4 頁  
+### Page 4  
 ![Page 4](folder/page05.png)
 
-### 第 5 頁
+### Page 5
 ![Page 5](folder/page06.png)
 
-### 第 6 頁  
+### Page 6
 ![Page 6](folder/page09.png)
 
-### 第 7 頁
+### Page 7
 ![Page 7](folder/page10.png)
 
-### 第 8 頁
+### Page 8
 ![Page 8](folder/page11.png)
 
-### 第 9 頁
+### Page 9
 ![Page 9](folder/page12.png)
 
-### 第 10 頁  
+### Page 10
 ![Page 10](folder/page13.png)
 
-### 第 11 頁  
+### Page 11
 ![Page 11](folder/page14.png)
 
 
