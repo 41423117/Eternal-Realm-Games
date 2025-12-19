@@ -2,7 +2,7 @@
 
 |   |   |
 |---|---|
-| [<img src="folder/page07.png" alt="page07 icon" height="250"> 1] |
+| [<img src="folder/page07.png" alt="page07 icon" height="250"> Advanced Paste] |
 | [<img src="folder/page08.png" alt="page08 icon" height="250"> 2] |
 | [<img src="folder/page04.png" alt="page04 icon" height="250"> 3] |
 | [<img src="folder/page05.png" alt="page05 icon" height="250"> 4] |
