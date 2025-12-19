@@ -9,43 +9,6 @@
 | <img src="folder/page12.png" alt="page12 icon" height="250"> 9 | <img src="folder/page13.png" alt="page13 icon" height="250"> 10 |
 | <img src="folder/page14.png" alt="page14 icon" height="250"> 11 |   |
 
-### Page 1
-
-![Page 1](folder/page07.png)
-
-### Page 2  
-![Page 2](folder/page08.png)
-
-### Page 3
-![Page 3](folder/page04.png)
-
-### Page 4  
-![Page 4](folder/page05.png)
-
-### Page 5
-![Page 5](folder/page06.png)
-
-### Page 6
-![Page 6](folder/page09.png)
-
-### Page 7
-![Page 7](folder/page10.png)
-
-### Page 8
-![Page 8](folder/page11.png)
-
-### Page 9
-![Page 9](folder/page12.png)
-
-### Page 10
-![Page 10](folder/page13.png)
-
-### Page 11
-![Page 11](folder/page14.png)
-
-
-# w1
-
 # w9_11/6_12:41 Successfully launched
 I have created a game at this stage. The background of the game's main start screen is as shown in the 2k image, and a text button that says "Start" is generated in the lower middle section of the horizontal screen.
 
