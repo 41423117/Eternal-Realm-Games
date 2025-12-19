@@ -95,230 +95,224 @@ Remaining birds = Total birds - Birds killed - Birds escaped.
 
 This accurately reflects the number of birds that still need to be dealt with.
 
-### 改進了飛鳥生成邏輯：
+### Improved Bird Generation Logic:
 
-  在生成飛鳥時記錄了飛鳥的方向 (fromLeft)。
+When generating birds, the direction of each bird (fromLeft) is recorded.
 
-  記錄包含：日期時間、難度、分數。
+Records include: date and time, difficulty level, and score.
 
-  最新記錄顯示在最上方，舊記錄向下排列。
+The most recent records are displayed at the top, with older records listed below in descending order.
 
+### Data Persistence:
 
-### 數據持久化：
+Uses localStorage to save historical records.
 
-  使用 localStorage 保存歷史記錄。
+Records persist even after closing the browser or refreshing the page.
 
-  即使關閉瀏覽器或刷新頁面，記錄仍然存在。
+A maximum of 50 recent records are saved.
 
-  最多保存 50 條最近的記錄。
 
+### History Display:
 
-### 歷史記錄顯示：
+Each record shows the date, difficulty level, and score.
 
-  每條記錄顯示日期、難度和分數。
+If no historical records exist, "No game records yet" is displayed.
 
-  如果沒有歷史記錄，會顯示"暫無遊戲記錄"。
 
+# 11/15_02:53 I changed the game title to 【Eternal Realm Kingdom】 and added multiple game options and language settings:
 
-# 11/15_02:53 我修改遊戲標題成【永恆領域國度】，還新增多種遊戲選項和語言設定:
 
+## New Features
 
-## 新增功能
+### Game Selection Interface:
 
+After clicking "Start Game," a new game selection interface is displayed.
 
-### 游戏选择界面：
+There are six category tabs at the top: All Games, Shooting Games, Driving Games, Card Games, Action Games, Settings.
 
-点击"开始游戏"后显示新的游戏选择界面。
+The "All Games" category is displayed by default.
 
-顶部有六个分类标签：所有游戏、射击游戏、开车游戏、纸牌游戏、动作游戏、设定。
+The content area displays games corresponding to the selected category.
 
-默认显示"所有游戏"分类。
+### Game Display:
 
-内容区域显示相应分类的游戏。
+"Bird Shooting Game" is displayed in both the "All Games" and "Shooting Games" categories.
 
-### 游戏显示：
+Clicking "Bird Shooting Game" leads to the difficulty selection interface.
 
-在"所有游戏"和"射击游戏"分类中显示"飞鸟射击游戏"。
+Other categories display "No games available" if they are empty.
 
-点击"飞鸟射击游戏"后进入难度选择界面。
+### Language Switching Function:
 
-其他分类没有游戏时显示"暂无游戏"。
+Language switching options are displayed in the "Settings" category.
 
-### 语言切换功能：
+The language selector defaults to displaying "中文繁體" (Traditional Chinese).
 
-在"设定"分类中显示语言切换选项。
+Clicking it expands a list containing multiple language options.
 
-语言选择器默认显示"中文繁體"。
+After selecting a language, all text on the page switches to the corresponding language.
 
-点击后展开语言列表，包含多种语言选项。
+The language names within the selector itself always remain in Chinese.
 
-选择语言后，整个页面的文字会切换到对应语言。
+### Multi-language Support:
 
-语言选择器中的语言名称始终保持为中文。
+Complete translations for Traditional Chinese, Simplified Chinese, and English have been implemented.
 
-### 多语言支持：
+Other languages can be easily added.
 
-实现了中文繁体、中文简体和英文的完整翻译。
+This implementation retains all the original features of the Bird Shooting Game while adding the game selection interface and language switching function. The interface design maintains the original style, ensuring a consistent user experience.
 
-可以轻松扩展其他语言。
+# w13 12/06_04:00 更Feature Update
 
-这个实现保留了原有的飞鸟射击游戏的所有功能，同时添加了游戏选择界面和语言切换功能。界面设计保持了原有的风格，确保用户体验的一致性。
+## New Features:
 
 
-# w13 12/06_04:00 更新功能
+### Background Change Function:
 
+Added a "Change Background" option below the language switch in the Settings page.
 
-## 新增功能：
+A "Change Picture" button is on the right; clicking it opens a simulated file explorer window.
 
+### File Explorer Simulation:
 
-### 背景更換功能：
+Designed an interface similar to the Windows File Explorer.
 
-在設定頁面中，語言切換下方新增了「背景更換」選項。
+Displays common folders (Pictures, Downloads, Desktop, Documents).
 
-右邊有「更改圖片」按鈕，點擊後會開啟模擬的檔案總管視窗。
+Provides a direct image upload function.
 
-### 檔案總管模擬：
+### Image Processing and Saving:
 
-設計了類似Windows檔案總管的介面。
+Uses the FileReader API to read image files.
 
-顯示常見的資料夾（圖片、下載、桌面、文件）。
+Saves images in Base64 format to localStorage.
 
-提供直接上傳圖片的功能。
+Applies the background image using the CSS variable (--custom-background).
 
-### 圖片處理與保存：
+### Persistent Storage:
 
-使用 FileReader API 讀取圖片檔案。
+Uses localStorage to save the background image.
 
-將圖片以 Base64 格式保存到 localStorage。
+The background image persists after the game is closed or the page is refreshed.
 
-使用CSS變數(--custom-background)套用背景圖片。
+Image clarity is maintained.
 
-### 持久化儲存：
+### Background Application Scope:
 
-使用 localStorage 保存背景圖片。
+Applied to the "Start Game" main screen.
 
-遊戲關閉或頁面重新整理後，背景圖片依然保留。
+Applied to the "Options screen after starting the game."
 
-圖片保持清晰度。
+Retains the original tech-style light points and robotic arm effects.
 
-### 背景套用範圍：
+### Reset Function:
 
-套用到「開始遊戲」主畫面。
+Added a "Reset Background" button.
 
-套用到「開始遊戲後的選項」畫面。
+Restores the default background style.
 
-保留原有的科技感光點和機器手效果。
+### Multi-language Support:
 
-### 重置功能：
+The background change function supports multi-language display.
 
-新增「重置背景」按鈕。
+Integrated with the existing language system.
 
-可以恢復為預設的背景樣式。
+This allows users to freely change the game's background image, and the changed background will be permanently saved until the user manually resets it.
 
-### 多語言支援：
+# w14_12/14_15:20  Modifications:
 
-背景更換功能支援多語言顯示。
+## 1. CSS Section (Lines 135-275): Completely replaced the robotic arm style with an armor-plated style, including:
 
-與原有的語言系統整合。
+Deeper metallic tones and pronounced borders.
 
-這樣使用者就可以自由更換遊戲的背景圖片，並且更換後的背景會永久保存，直到使用者手動重置。
+5 distinct, protruding fingers (thumb, index finger, middle finger, ring finger, little finger).
 
+Finger joint details and a longer design.
 
-# w14_12/14_15:20 修改說明:
+Armor plates and bolt/rivet decorations.
 
-## 1. CSS部分（第135-275行）：完全替換了機器手臂的樣式，改為鎧甲風格，包括：  
+Enhanced light effects and shadows.
 
-更深的金屬色調和明顯的邊框。
+## 2. HTML Section (Lines 519-547): Replaced the structure of the left and right robotic hands:
 
-5根分明突出的手指（大拇指、食指、中指、無名指、小拇指）。
+Added more finger structures (5 fingers).
 
-手指關節細節和更長的設計。
+Added armor plates and bolt decorations.
 
-鎧甲板塊和螺栓/鉚釘裝飾。
+Each finger has joint details.
 
-增強的光效和陰影。
+### The robotic arms now appear as armor-plated mechanical hands with more distinct and protruding fingers, giving an overall more three-dimensional and mechanical feel.
 
-## 2. HTML部分（第519-547行）：替換了左右兩隻機器手的結構：  
+# w15_12/17_02:20 Main New Features
 
-增加了更多手指結構（5根手指）。
+## 1. Background Change System
 
-添加了鎧甲板塊和螺栓裝飾。
+Added a "Settings" tab containing the background change function.
 
-每根手指都有關節細節。
+Added a "File Explorer Simulation Window" interface.
 
-### 現在機器手臂會顯示為像鎧甲一樣的機械手，手指更加分明突出，整體更有立體感和機械感。
+Supports uploading custom images as the game background.
 
+Added a "Reset Background" button (square button design).
 
-# w15_12/17_02:20 主要新增功能 
+## 2. Language Switching Function
 
-## 1. 背景更換系統 
+Added a complete language switching system within Settings.
 
-新增「設定」選項卡，內含背景更換功能。
+Supports three languages: Traditional Chinese, Simplified Chinese, and English.
 
-添加了「檔案總管模擬視窗」介面。
+Dynamically updates all interface text.
 
-支援上傳自訂圖片作為遊戲背景。
+## 3.  Enhanced Shooting Game Features
 
-新增「重置背景」按鈕（正方形按鈕設計）。
+### Added Bomb Element: Randomly appearing bombs that deduct points when clicked.
 
-## 2. 語言切換功能 
+### Improved Random Difficulty Mode:
 
-在設定中新增完整的語言切換系統。
+Changed to a 40-second time-limited mode.
 
-支援繁體中文、簡體中文、英文三種語言。
+Bombs have different sizes (1x, 1.5x, 2x) corresponding to different point deductions.
 
-動態更新所有介面文字。
+More random bird generation timing.
 
-## 3. 增強型射擊遊戲功能 
+### Added Point Deduction Animation Effect: Displays red deduction numbers when clicking bombs.
 
-### 新增炸彈元素：隨機出現的炸彈，點擊會扣分 
+## 4. Improved User Interface
 
-### 隨機難度模式改進：
+Square Button Design: The background change button changed to a square style.
 
-改為 40 秒限時模式。
+Redesigned Category Tabs: Added "Settings" and "All Games" categories.
 
-炸彈有不同大小（1x、1.5x、2x）對應不同扣分。
+Enhanced Tech-Style Light Points: Dynamically creates more light point effects.
 
-更隨機的飛鳥生成時間。
+## 12/17_03:20 Main Modifications:
 
-### 新增扣分動畫效果：點擊炸彈時顯示紅色扣分數字 
-
-## 4. 改進的使用者介面
-
-正方形按鈕設計：背景更換按鈕改為正方形樣式。
-
-分類標籤重新設計：新增「設定」和「所有遊戲」分類。
-
-科技感光點增強：動態創建更多光點效果。
-
-## 12/17_03:20 主要修改內容：
-
-### 1.刪除了不必要的投籃遊戲程式：只保留了原有的飛鳥射擊遊戲。
+### 1.Deleted Unnecessary Basketball Game Code: Only the original Bird Shooting Game was retained.
  
-### 2.整合了生存射擊遊戲：
+### 2.Integrated Survival Shooting Game:
 
-將[新遊戲]檔的生存射擊遊戲完整整合到[原本]檔中。
+The survival shooting game from the [New Game] file was fully integrated into the [Original] file.
 
-新增了生存射擊遊戲的所有畫面、HUD、遊戲邏輯和繪製功能。
+Added all screens, HUD, game logic, and drawing functions for the survival shooting game.
 
-新增了生存射擊遊戲專用的CSS樣式。
+Added CSS styles specific to the survival shooting game.
 
-#### 3.新增了"survive"遊戲格子：
+#### 3.Added "survive" Game Tile:
 
-在games物件中新增了survive遊戲，屬於"shooting"類別。
+Added a survive game to the games object, belonging to the "shooting" category.
 
-在"所有遊戲"和"射擊遊戲"分類下都會顯示"生存射擊遊戲"格子。
+The "Survival Shooting Game" tile will be displayed under both the "All Games" and "Shooting Games" categories.
 
-#### 4.點擊"survive"格子的功能：
+#### 4.Function of Clicking the "survive" Tile:
 
-當用戶點擊"生存射擊遊戲"格子時，會切換到生存射擊遊戲的開始畫面。
+When a user clicks the "Survival Shooting Game" tile, it switches to the start screen of the survival shooting game.
 
-生存射擊遊戲有完整的開始/退出按鈕，與[2.1]檔的設計一致。
+The survival shooting game has complete start/exit buttons, consistent with the design of the [Original] file.
 
-可以從生存射擊遊戲返回主選單或遊戲選擇界面。
+It is possible to return to the main menu or game selection interface from the survival shooting game.
 
-#### 5.遊戲狀態管理：
+#### 5.Game State Management:
 
-新增了SURVIVAL_GAME遊戲狀態。
+Added a SURVIVAL_GAME game state.
 
-確保兩個遊戲之間的切換順暢，不會互相干擾。
+Ensures smooth switching between the two games without interference.
