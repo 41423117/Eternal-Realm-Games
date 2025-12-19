@@ -1,6 +1,7 @@
 ## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
 |   |
+|---|
 | [<img src="folder/page07.png" alt="page07 icon" height="300"> 開頭](https://41423117.github.io/Eternal-Realm-Games/) |   |
 
 ### Page 1
