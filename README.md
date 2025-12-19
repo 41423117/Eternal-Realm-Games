@@ -1,5 +1,7 @@
 ## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
+[<img src="folder/page07.png" alt="page07 icon" height="20"> page07]
+
 ### Page 1
 
 ![Page 1](folder/page07.png)
