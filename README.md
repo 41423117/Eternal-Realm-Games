@@ -1,10 +1,10 @@
 ## Click [here to open the simulator](https://41423117.github.io/Eternal-Realm-Games/)
 
-|   |
-|---|
-| [1 [img src="folder/page07.png" alt="page07 icon" height="250">] |
-| [2 [img src="folder/page08.png" alt="page08 icon" height="250">] |
-| [3 [img src="folder/page04.png" alt="page04 icon" height="250">] |
+|   |   |
+|---|---|
+| [1 <img src="folder/page07.png" alt="page07 icon" height="250">] |
+| [2 <img src="folder/page08.png" alt="page08 icon" height="250">] |
+| [3 <img src="folder/page04.png" alt="page04 icon" height="250">] |
 | [4 <img src="folder/page05.png" alt="page05 icon" height="250">] |
 | [5 <img src="folder/page06.png" alt="page06 icon" height="250">] |
 | [6 <img src="folder/page09.png" alt="page09 icon" height="250">] |
