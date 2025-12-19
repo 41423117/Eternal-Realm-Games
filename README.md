@@ -87,15 +87,15 @@
 
   在 updateBirds() 函數中，現在會檢查飛鳥是否完全飛出畫面。
   
-**當飛鳥從左邊飛出時，檢查 bird.x：** $\texttt{\`\`\`}$
-* ```
+# 當飛鳥從左邊飛出時，檢查 bird.x
+```
   bird.x > gameCanvas.width + birdWidth/2。
-**當飛鳥從右邊飛出時，檢查 bird.x：** $\texttt{\`\`\`}$
-* ```
+```
+# 當飛鳥從左邊飛出時，檢查 bird.x
   bird.x < -birdWidth/2。
-$\texttt{}$
+```
   飛鳥飛出畫面後會從陣列中移除，並增加 birdsEscaped 計數。
-
+```
 
 ### 更新了剩餘飛鳥計算方式：
 
