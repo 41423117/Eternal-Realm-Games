@@ -2023,6 +2023,11 @@
 
         // 生存射擊遊戲元素
         let survivalCanvas, survivalCtx;
+        
+        // ========== 新增Boss圖片變數 ==========
+        let bossImage = null;
+        let bossImageLoaded = false;
+        let fallbackBossImage = null;
 
         // 初始化遊戲
         function init() {
@@ -2064,6 +2069,158 @@
             
             // 設置事件監聽器
             setupSurvivalEventListeners();
+            
+            // 初始化Boss圖片
+            initBossImage();
+        }
+        
+        // 初始化Boss圖片
+        function initBossImage() {
+            bossImage = new Image();
+            bossImage.onload = function() {
+                bossImageLoaded = true;
+                console.log('Boss圖片加載完成');
+            };
+            bossImage.onerror = function() {
+                // 如果圖片加載失敗，創建備用Boss圖片
+                bossImageLoaded = false;
+                createFallbackBossImage();
+                console.log('Boss圖片加載失敗，使用繪製的Boss');
+            };
+            // 設置圖片來源 - 這是您提供的網址
+            bossImage.crossOrigin = "anonymous";
+            bossImage.src = 'https://pixlab24.com/character/2626/';
+        }
+        
+        // 創建備用Boss圖片（當外部圖片無法加載時使用）
+        function createFallbackBossImage() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            
+            // 繪製機械風格Boss
+            drawFallbackBoss(ctx, 100, 100, 80);
+            
+            // 將繪製的內容轉為Image對象
+            fallbackBossImage = new Image();
+            fallbackBossImage.onload = function() {
+                bossImage = fallbackBossImage;
+                bossImageLoaded = true;
+            };
+            fallbackBossImage.src = canvas.toDataURL();
+        }
+        
+        // 繪製備用機械Boss
+        function drawFallbackBoss(ctx, x, y, size) {
+            // 保存畫布狀態
+            ctx.save();
+            
+            // 主體 - 機械核心
+            ctx.fillStyle = '#4a4a4a';
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 外圈 - 裝甲環
+            ctx.strokeStyle = '#2a2a2a';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 內圈 - 能量環
+            ctx.strokeStyle = '#4cc9f0';
+            ctx.lineWidth = 6;
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.9, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // 中心能量核心
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 0.5);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.3, '#4cc9f0');
+            gradient.addColorStop(1, 'rgba(76, 201, 240, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 裝甲板
+            ctx.fillStyle = '#3a3a3a';
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI * 2) / 6;
+                const px = x + Math.cos(angle) * size * 0.7;
+                const py = y + Math.sin(angle) * size * 0.7;
+                
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(angle);
+                
+                // 裝甲板形狀
+                ctx.beginPath();
+                ctx.moveTo(-15, -10);
+                ctx.lineTo(15, -10);
+                ctx.lineTo(20, 0);
+                ctx.lineTo(15, 10);
+                ctx.lineTo(-15, 10);
+                ctx.lineTo(-20, 0);
+                ctx.closePath();
+                ctx.fill();
+                
+                // 裝甲板細節
+                ctx.strokeStyle = '#4cc9f0';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-10, -5);
+                ctx.lineTo(10, -5);
+                ctx.lineTo(12, 0);
+                ctx.lineTo(10, 5);
+                ctx.lineTo(-10, 5);
+                ctx.lineTo(-12, 0);
+                ctx.closePath();
+                ctx.stroke();
+                
+                ctx.restore();
+            }
+            
+            // 眼睛/感應器
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(x - size * 0.3, y - size * 0.2, size * 0.15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(x + size * 0.3, y - size * 0.2, size * 0.15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 眼睛光效
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(x - size * 0.25, y - size * 0.25, size * 0.05, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(x + size * 0.35, y - size * 0.25, size * 0.05, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 武器/觸手
+            ctx.strokeStyle = '#4cc9f0';
+            ctx.lineWidth = 6;
+            for (let i = 0; i < 4; i++) {
+                const angle = (i * Math.PI * 2) / 4 + Math.PI/4;
+                ctx.beginPath();
+                ctx.moveTo(x + Math.cos(angle) * size * 0.8, y + Math.sin(angle) * size * 0.8);
+                ctx.lineTo(x + Math.cos(angle) * size * 1.5, y + Math.sin(angle) * size * 1.5);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
         }
 
         // 調整生存射擊遊戲畫布大小
@@ -2341,7 +2498,7 @@
             survivalGameState.enemySpawnDelay = Math.max(300, 1000 - survivalGameState.score * 5);
         }
 
-        // 生成boss怪
+        // 生成boss怪 - 修改為更強大的Boss
         function spawnSurvivalBoss() {
             if (survivalGameState.currentScreen !== 'game' || survivalGameState.isPaused) return;
             
@@ -2351,13 +2508,13 @@
             survivalGameState.lastBossSpawn = now;
             survivalGameState.bossGeneration++;
             
-            // boss初始血量30點，每次生成增加10點
-            const bossBaseHealth = 30;
-            const bossHealth = bossBaseHealth + (survivalGameState.bossGeneration * 10);
+            // boss初始血量80點，每次生成增加20點
+            const bossBaseHealth = 80;
+            const bossHealth = bossBaseHealth + (survivalGameState.bossGeneration * 20);
             
-            // boss傷害每次增加12點
-            const bossBaseDamage = 10;
-            const bossDamage = bossBaseDamage + (survivalGameState.bossGeneration * 12);
+            // boss傷害每次增加20點
+            const bossBaseDamage = 20;
+            const bossDamage = bossBaseDamage + (survivalGameState.bossGeneration * 20);
             
             // boss從上方生成
             const x = Math.random() * survivalCanvas.width;
@@ -2366,19 +2523,21 @@
             const boss = {
                 x: x,
                 y: y,
-                size: 50 + survivalGameState.bossGeneration * 5, // boss體型隨生成次數增加
-                speed: 0.5 + (survivalGameState.bossGeneration * 0.1), // 移動速度較慢，隨生成次數增加
+                size: 70 + survivalGameState.bossGeneration * 5, // boss體型隨生成次數增加
+                speed: 0.8 + (survivalGameState.bossGeneration * 0.08), // 移動速度稍快
                 health: bossHealth,
                 maxHealth: bossHealth,
                 damage: bossDamage,
                 color: `hsl(${340 + (survivalGameState.bossGeneration * 5) % 20}, 100%, 50%)`,
-                isBoss: true
+                isBoss: true,
+                lastShotTime: 0, // 用於控制射擊間隔
+                shootDelay: 1500 - (survivalGameState.bossGeneration * 50) // 射擊間隔隨生成次數減少
             };
             
             survivalGameState.bosses.push(boss);
             
             // 顯示boss生成訊息
-            showBossAlert(`BOSS ${survivalGameState.bossGeneration} 出現！`);
+            showBossAlert(`機械Boss ${survivalGameState.bossGeneration} 出現！`);
         }
 
         // 顯示boss警報
@@ -2531,14 +2690,51 @@
                         survivalGameState.bullets.splice(i, 1);
                         
                         if (boss.health <= 0) {
-                            survivalGameState.score += Math.floor(boss.size * 10);
+                            survivalGameState.score += Math.floor(boss.size * 15); // 增加Boss擊敗分數
                             survivalGameState.bosses.splice(j, 1);
                             
-                            // boss必定爆出傷害+20點能量塊
-                            spawnPowerUp(boss.x, boss.y, 'damage_big');
+                            // Boss必定爆出多個能量塊
+                            const dropCount = 3 + Math.floor(Math.random() * 3); // 3-5個掉落物
+                            
+                            for (let k = 0; k < dropCount; k++) {
+                                // 計算掉落位置
+                                const dropX = boss.x + (Math.random() * 100 - 50);
+                                const dropY = boss.y + (Math.random() * 100 - 50);
+                                
+                                // 隨機選擇能量塊類型（更高機率掉落高級能量塊）
+                                const types = [
+                                    'damage_big', // 傷害+20點
+                                    'max_health', // 永久生命值增加20點
+                                    'heal', // 回血30點
+                                    'damage_big', // 傷害+20點
+                                    'max_health', // 永久生命值增加20點
+                                    'damage_small' // 傷害+3點
+                                ];
+                                const type = types[Math.floor(Math.random() * types.length)];
+                                
+                                spawnPowerUp(dropX, dropY, type);
+                            }
                         }
                         updateSurvivalHUD();
                         break;
+                    }
+                }
+                
+                // 檢查玩家是否被子彈擊中（如果是Boss的子彈）
+                if (bullet.isBossBullet) {
+                    const dx = bullet.x - survivalGameState.player.x;
+                    const dy = bullet.y - survivalGameState.player.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < survivalGameState.player.size + bullet.size) {
+                        survivalGameState.player.health -= bullet.damage || 5;
+                        survivalGameState.bullets.splice(i, 1);
+                        updateSurvivalHUD();
+                        
+                        if (survivalGameState.player.health <= 0) {
+                            survivalGameOver();
+                        }
+                        continue;
                     }
                 }
             }
@@ -2599,12 +2795,40 @@
                 const dy = survivalGameState.player.y - boss.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                boss.x += (dx / distance) * boss.speed;
-                boss.y += (dy / distance) * boss.speed;
+                // 如果距離較遠，則移動向玩家
+                if (distance > 200) {
+                    boss.x += (dx / distance) * boss.speed;
+                    boss.y += (dy / distance) * boss.speed;
+                } else {
+                    // 如果距離較近，則圍繞玩家移動
+                    boss.x += (dy / distance) * boss.speed * 0.5; // 垂直方向移動
+                    boss.y -= (dx / distance) * boss.speed * 0.5; // 水平方向移動
+                }
+                
+                // Boss射擊
+                const now = Date.now();
+                if (now - boss.lastShotTime > boss.shootDelay) {
+                    boss.lastShotTime = now;
+                    
+                    // 向玩家發射子彈
+                    const bulletSpeed = 4;
+                    const bullet = {
+                        x: boss.x,
+                        y: boss.y,
+                        dx: (dx / distance) * bulletSpeed,
+                        dy: (dy / distance) * bulletSpeed,
+                        size: 8,
+                        damage: 10,
+                        color: '#FF0000',
+                        isBossBullet: true
+                    };
+                    
+                    survivalGameState.bullets.push(bullet);
+                }
                 
                 // 檢查是否碰到玩家
                 if (distance < boss.size + survivalGameState.player.size) {
-                    survivalGameState.player.health -= boss.damage;
+                    survivalGameState.player.health -= boss.damage * 0.5; // 接觸傷害減半
                     updateSurvivalHUD();
                     
                     if (survivalGameState.player.health <= 0) {
@@ -2737,6 +2961,15 @@
                 survivalCtx.beginPath();
                 survivalCtx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
                 survivalCtx.fill();
+                
+                // 如果是Boss子彈，添加特效
+                if (bullet.isBossBullet) {
+                    survivalCtx.fillStyle = '#FF0000';
+                    survivalCtx.beginPath();
+                    survivalCtx.arc(bullet.x, bullet.y, bullet.size + 2, 0, Math.PI * 2);
+                    survivalCtx.fill();
+                    survivalCtx.fillStyle = '#FFD700';
+                }
             });
             
             // 繪製小怪
@@ -2750,20 +2983,37 @@
                 drawHealthBar(enemy.x, enemy.y, enemy.size, enemy.health, enemy.maxHealth);
             });
             
-            // 繪製boss怪
+            // 繪製boss怪 - 修改為使用圖片
             survivalGameState.bosses.forEach(boss => {
-                // boss本體
-                survivalCtx.fillStyle = boss.color;
-                survivalCtx.beginPath();
-                survivalCtx.arc(boss.x, boss.y, boss.size, 0, Math.PI * 2);
-                survivalCtx.fill();
-                
-                // boss外框
-                survivalCtx.strokeStyle = '#FF0000';
-                survivalCtx.lineWidth = 3;
-                survivalCtx.beginPath();
-                survivalCtx.arc(boss.x, boss.y, boss.size, 0, Math.PI * 2);
-                survivalCtx.stroke();
+                // 使用圖片或繪製的Boss
+                if (bossImageLoaded && bossImage) {
+                    // 計算Boss的旋轉角度（使其面向玩家）
+                    const dx = survivalGameState.player.x - boss.x;
+                    const dy = survivalGameState.player.y - boss.y;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // 保存畫布狀態
+                    survivalCtx.save();
+                    
+                    // 移動到Boss位置並旋轉
+                    survivalCtx.translate(boss.x, boss.y);
+                    survivalCtx.rotate(angle);
+                    
+                    // 繪製Boss圖片
+                    survivalCtx.drawImage(
+                        bossImage, 
+                        -boss.size, // x偏移
+                        -boss.size, // y偏移
+                        boss.size * 2, // 寬度
+                        boss.size * 2 // 高度
+                    );
+                    
+                    // 恢復畫布狀態
+                    survivalCtx.restore();
+                } else {
+                    // 備用：繪製機械風格Boss
+                    drawFallbackBoss(survivalCtx, boss.x, boss.y, boss.size);
+                }
                 
                 // boss生命值條（更大更明顯）
                 drawBossHealthBar(boss.x, boss.y, boss.size, boss.health, boss.maxHealth);
@@ -2773,7 +3023,7 @@
                 survivalCtx.font = 'bold 20px Arial';
                 survivalCtx.textAlign = 'center';
                 survivalCtx.textBaseline = 'middle';
-                survivalCtx.fillText('BOSS', boss.x, boss.y);
+                survivalCtx.fillText('BOSS', boss.x, boss.y - boss.size - 30);
             });
             
             // 繪製能量塊
