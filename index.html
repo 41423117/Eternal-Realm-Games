@@ -2016,9 +2016,19 @@
             lastEnemySpawn: 0,
             lastBossSpawn: 0, // 記錄上次生成boss的時間
             bossSpawnInterval: 90000, // 1.5分鐘生成一個boss (90秒 * 1000毫秒)
-            enemySpawnDelay: 1000,
+            enemySpawnDelay: 500,
             gameLoopId: null,
-            bossGeneration: 0 // 記錄boss生成次數
+            bossGeneration: 0, // 記錄boss生成次數
+            // 新增變數
+            canSpawnEnemies: true, // 是否可以生成小怪
+            maxEnemies: 9, // 場上最多小怪數量
+            enemyBaseSpeed: 2.0, // 小怪基礎速度（均勻）
+            bossWarningActive: false, // Boss警告是否激活
+            bossWarningTime: 5000, // Boss出現前警告時間（5秒）
+            bossCooldownTime: 5000, // Boss死後冷卻時間（5秒）
+            bossAlive: false, // Boss是否存活
+            lastBossDeathTime: 0, // 上次Boss死亡時間
+            warningShown: false // 警告是否已顯示
         };
 
         // 生存射擊遊戲元素
@@ -2352,6 +2362,10 @@
             survivalGameState.lastEnemySpawn = Date.now();
             survivalGameState.lastBossSpawn = Date.now();
             survivalGameState.bossGeneration = 0;
+            survivalGameState.canSpawnEnemies = true;
+            survivalGameState.bossAlive = false;
+            survivalGameState.lastBossDeathTime = 0;
+            survivalGameState.warningShown = false;
             
             updateSurvivalHUD();
         }
@@ -2396,6 +2410,10 @@
             survivalGameState.lastEnemySpawn = Date.now();
             survivalGameState.lastBossSpawn = Date.now();
             survivalGameState.bossGeneration = 0;
+            survivalGameState.canSpawnEnemies = true;
+            survivalGameState.bossAlive = false;
+            survivalGameState.lastBossDeathTime = 0;
+            survivalGameState.warningShown = false;
             
             updateSurvivalHUD();
             
@@ -2445,57 +2463,118 @@
             }
         }
 
-        // 敵人生成
+        // 敵人生成 - 修改為控制數量和速度
         function spawnSurvivalEnemy() {
             if (survivalGameState.currentScreen !== 'game' || survivalGameState.isPaused) return;
+            
+            // 檢查是否可以生成小怪
+            if (!survivalGameState.canSpawnEnemies) return;
+            
+            // 檢查場上小怪數量
+            if (survivalGameState.enemies.length >= survivalGameState.maxEnemies) return;
             
             const now = Date.now();
             if (now - survivalGameState.lastEnemySpawn < survivalGameState.enemySpawnDelay) return;
             
             survivalGameState.lastEnemySpawn = now;
             
-            // 隨機選擇生成位置（從四個邊緣之一）
-            const side = Math.floor(Math.random() * 4);
-            let x, y;
+            // 需要生成的小怪數量
+            const enemiesToSpawn = survivalGameState.maxEnemies - survivalGameState.enemies.length;
             
-            switch(side) {
-                case 0: // 上邊
-                    x = Math.random() * survivalCanvas.width;
-                    y = -50;
-                    break;
-                case 1: // 右邊
-                    x = survivalCanvas.width + 50;
-                    y = Math.random() * survivalCanvas.height;
-                    break;
-                case 2: // 下邊
-                    x = Math.random() * survivalCanvas.width;
-                    y = survivalCanvas.height + 50;
-                    break;
-                case 3: // 左邊
-                    x = -50;
-                    y = Math.random() * survivalCanvas.height;
-                    break;
+            for (let i = 0; i < enemiesToSpawn; i++) {
+                // 隨機選擇生成位置（從四個邊緣之一）
+                const side = Math.floor(Math.random() * 4);
+                let x, y;
+                
+                switch(side) {
+                    case 0: // 上邊
+                        x = Math.random() * survivalCanvas.width;
+                        y = -50;
+                        break;
+                    case 1: // 右邊
+                        x = survivalCanvas.width + 50;
+                        y = Math.random() * survivalCanvas.height;
+                        break;
+                    case 2: // 下邊
+                        x = Math.random() * survivalCanvas.width;
+                        y = survivalCanvas.height + 50;
+                        break;
+                    case 3: // 左邊
+                        x = -50;
+                        y = Math.random() * survivalCanvas.height;
+                        break;
+                }
+                
+                // 小怪血量為15或20點隨機
+                const enemyHealth = Math.random() > 0.5 ? 15 : 20;
+                
+                // 小怪使用均勻速度
+                const enemy = {
+                    x: x,
+                    y: y,
+                    size: 15 + Math.random() * 10,
+                    speed: survivalGameState.enemyBaseSpeed, // 均勻速度
+                    health: enemyHealth,
+                    maxHealth: enemyHealth,
+                    damage: 2, // 小怪傷害
+                    color: `hsl(${Math.random() * 60}, 100%, 50%)`,
+                    isBoss: false
+                };
+                
+                survivalGameState.enemies.push(enemy);
             }
             
-            // 小怪血量為15或20點隨機
-            const enemyHealth = Math.random() > 0.5 ? 15 : 20;
+            // 固定生成速度
+            survivalGameState.enemySpawnDelay = 500;
+        }
+
+        // 檢查Boss狀態並更新小怪生成許可
+        function checkBossStatus() {
+            const now = Date.now();
+            const timeSinceLastBoss = now - survivalGameState.lastBossSpawn;
             
-            const enemy = {
-                x: x,
-                y: y,
-                size: 15 + Math.random() * 10,
-                speed: 1 + Math.random() * 2 + (survivalGameState.score * 0.01),
-                health: enemyHealth,
-                maxHealth: enemyHealth,
-                damage: 2, // 小怪傷害
-                color: `hsl(${Math.random() * 60}, 100%, 50%)`,
-                isBoss: false
-            };
+            // 計算是否可以生成小怪
+            let canSpawn = true;
             
-            survivalGameState.enemies.push(enemy);
+            // 冷卻階段：Boss死亡後5秒內
+            if (survivalGameState.lastBossDeathTime && 
+                now - survivalGameState.lastBossDeathTime < survivalGameState.bossCooldownTime) {
+                canSpawn = false;
+                
+                // 如果冷卻時間還剩2秒以上，顯示倒數訊息
+                const timeLeft = survivalGameState.bossCooldownTime - (now - survivalGameState.lastBossDeathTime);
+                if (timeLeft > 2000 && Math.floor(timeLeft / 1000) !== Math.floor((timeLeft + 100) / 1000)) {
+                    const secondsLeft = Math.ceil(timeLeft / 1000);
+                    if (secondsLeft <= 5) {
+                        showEffectMessage(`小怪 ${secondsLeft} 秒後恢復生成`, "#4CAF50");
+                    }
+                }
+            }
+            // 預警階段：Boss生成前5秒
+            else if (timeSinceLastBoss >= survivalGameState.bossSpawnInterval - survivalGameState.bossWarningTime && 
+                    timeSinceLastBoss < survivalGameState.bossSpawnInterval &&
+                    !survivalGameState.bossAlive) {
+                canSpawn = false;
+                
+                // 顯示警告（僅一次）
+                if (!survivalGameState.warningShown) {
+                    showBossAlert("警告：機械Boss 即將在5秒後出現！");
+                    survivalGameState.warningShown = true;
+                }
+                
+                // 顯示倒數
+                const timeUntilBoss = survivalGameState.bossSpawnInterval - timeSinceLastBoss;
+                const secondsLeft = Math.ceil(timeUntilBoss / 1000);
+                if (secondsLeft <= 5 && secondsLeft > 0) {
+                    showEffectMessage(`Boss ${secondsLeft} 秒後出現`, "#FF0000");
+                }
+            }
+            // Boss戰階段
+            else if (survivalGameState.bossAlive) {
+                canSpawn = false;
+            }
             
-            // 根據分數調整生成速度
-            survivalGameState.enemySpawnDelay = Math.max(300, 1000 - survivalGameState.score * 5);
+            survivalGameState.canSpawnEnemies = canSpawn;
         }
 
         // 生成boss怪 - 修改為更強大的Boss
@@ -2503,10 +2582,15 @@
             if (survivalGameState.currentScreen !== 'game' || survivalGameState.isPaused) return;
             
             const now = Date.now();
-            if (now - survivalGameState.lastBossSpawn < survivalGameState.bossSpawnInterval) return;
+            const timeSinceLastBoss = now - survivalGameState.lastBossSpawn;
             
-            survivalGameState.lastBossSpawn = now;
+            // 檢查是否應該生成Boss
+            if (timeSinceLastBoss < survivalGameState.bossSpawnInterval || survivalGameState.bossAlive) return;
+            
             survivalGameState.bossGeneration++;
+            survivalGameState.bossAlive = true;
+            survivalGameState.lastBossSpawn = now;
+            survivalGameState.warningShown = false;
             
             // boss初始血量80點，每次生成增加20點
             const bossBaseHealth = 80;
@@ -2605,6 +2689,9 @@
         function updateSurvival() {
             if (survivalGameState.isPaused) return;
             
+            // 檢查Boss狀態並更新小怪生成許可
+            checkBossStatus();
+            
             // 玩家移動
             if (survivalGameState.keys['w'] || survivalGameState.keys['arrowup']) {
                 survivalGameState.player.y -= survivalGameState.player.speed;
@@ -2692,6 +2779,8 @@
                         if (boss.health <= 0) {
                             survivalGameState.score += Math.floor(boss.size * 15); // 增加Boss擊敗分數
                             survivalGameState.bosses.splice(j, 1);
+                            survivalGameState.bossAlive = false;
+                            survivalGameState.lastBossDeathTime = Date.now();
                             
                             // Boss必定爆出多個能量塊
                             const dropCount = 3 + Math.floor(Math.random() * 3); // 3-5個掉落物
@@ -2714,6 +2803,9 @@
                                 
                                 spawnPowerUp(dropX, dropY, type);
                             }
+                            
+                            // 顯示Boss死亡訊息
+                            showEffectMessage(`Boss擊敗！5秒後恢復小怪生成`, "#FFD700");
                         }
                         updateSurvivalHUD();
                         break;
