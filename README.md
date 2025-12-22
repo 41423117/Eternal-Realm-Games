@@ -411,7 +411,7 @@ The Boss drops 3-5 power-ups when defeated.
 Higher probability of dropping advanced power-ups (damage +20 and max health +20).
 
 
-# #16_12/22_17:15_Main modifications:
+# w16_12/22_17:15_Main modifications:
 
 ## 1. Add state variables for survival shooter:
 
